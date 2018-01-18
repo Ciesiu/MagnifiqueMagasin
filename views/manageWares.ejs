@@ -1,0 +1,131 @@
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css">
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/demo/demo.css">
+  <link rel="stylesheet" type="text/css" href="https://www.jeasyui.com/easyui/themes/color.css">
+
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
+  <script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
+
+</head>
+<body>
+<div id="comboRow">
+  <input id="cc1" class="easyui-combobox" data-options="
+        valueField: 'id',
+        textField: 'name',
+        method: 'get',
+        url: 'http://localhost:1337/api/warehouse/getAll',
+        onSelect: function(rec){
+            var url = 'http://localhost:1337/api/sector/getWHSectors?whId='+rec.id;
+            $('#cc2').combobox('reload', url);
+        }">
+  <input id="cc2" class="easyui-combobox" data-options="
+        valueField:'id',
+        textField:'name',
+        method:'get',
+        onSelect: function(rec){
+            var url = 'http://localhost:1337/api/ware/getSecWares?secId='+rec.id;
+            $('#dg').datagrid('reload', url);
+        }">
+</div>
+<div id="dataRow">
+  <table id="dg" title="Towary" class="easyui-datagrid" style="width:550px;height:250px"
+         method="GET"
+         toolbar="#toolbar"
+         rownumbers="true" fitColumns="true" singleSelect="true">
+    <thead>
+    <tr>
+      <th field="id" width="50">ID</th>
+      <th field="name" width="50">Nazwa</th>
+      <th field="quantity" width="50">Ilość</th>
+      <th field="status" width="50">Status</th>
+    </tr>
+    </thead>
+  </table>
+  <div id="toolbar">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addWareDialog()">Dodaj towar</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editWareDialog()">Edytuj towar</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteWare()">Usuń towar</a>
+  </div>
+</div>
+
+<div id="dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+     closed="true" buttons="#dlg-buttons">
+  <form id="fm" name="fm" method="get" novalidate>
+    <div style="margin-bottom:5px;margin-top:10px">
+      <input name="name" label="Nazwa:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <div style="margin-bottom:5px">
+      <input name="quantity" label="Ilość:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <div style="margin-bottom:5px">
+      <input name="status" label="Status:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <input type="hidden" name="id"/>
+  </form>
+</div>
+<div id="dlg-buttons">
+  <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveWare()" style="width:90px">Zapisz</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">Anuluj</a>
+</div>
+
+<script>
+  function addWareDialog(){
+    $('#dlg').dialog('open').dialog('setTitle','Nowy towar');
+    $('#fm').form('clear');
+    url = '/api/ware/add';
+  }
+  function editWareDialog(){
+    var row = $('#dg').datagrid('getSelected');
+    if (row){
+      $('#dlg').dialog('open').dialog('setTitle','Edytuj towar');
+      $('#fm').form('load',row);
+      url = '/api/ware/edit';
+    }
+  }
+  function saveWare(){
+    var sectorId = $('#cc2').val();
+    var input = $("<input>")
+      .attr("type", "hidden")
+      .attr("name", "sectorId").val(sectorId);
+    $('#fm').append($(input));
+
+    $('#fm').form('submit',{
+      url: url,
+      success: function(data){
+        if (data.serverError){
+          $.messager.show({
+            title: 'Błąd',
+            msg: data.serverError
+          });
+        } else {
+          $('#dlg').dialog('close');        // close the dialog
+          $('#dg').datagrid('reload');    // reload the user data
+        }
+      }
+    });
+  }
+  function deleteWare(){
+    var row = $('#dg').datagrid('getSelected');
+    if (row){
+      $.messager.confirm('Potwierdź','Czy na pewno chcesz usunąć wybrany towar?',function(r){
+        if (r){
+          $.get('/api/ware/delete',{id:row.id})
+            .done(function(data) {
+              if (data.serverError){
+                $.messager.show({    // show error message
+                  title: 'Błąd',
+                  msg: data.serverError
+                });
+              } else {
+                $('#dg').datagrid('reload');    // reload the ware data
+              }
+            })
+        }
+      });
+    }
+  }
+</script>
+</body>
+</html>

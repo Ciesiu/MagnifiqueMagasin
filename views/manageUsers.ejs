@@ -1,0 +1,127 @@
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css">
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/demo/demo.css">
+  <link rel="stylesheet" type="text/css" href="https://www.jeasyui.com/easyui/themes/color.css">
+
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
+  <script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/core-min.js"></script>
+  <script type="text/javascript" src=" https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js"></script>
+
+</head>
+<body>
+<div>
+  <h2>Zalogowano jako: <div id="firstLastName"></div></h2>
+</div>
+<table id="dg" title="Użytkownicy" class="easyui-datagrid" style="width:550px;height:250px"
+       method="GET"
+       url="/api/user/getAll"
+       toolbar="#toolbar"
+       rownumbers="true" fitColumns="true" singleSelect="true">
+  <thead>
+  <tr>
+    <th field="id" width="50">ID</th>
+    <th field="firstName" width="50">Imię</th>
+    <th field="lastName" width="50">Nazwisko</th>
+    <th field="userName" width="50">Login</th>
+    <th field="role" width="50">Rola</th>
+  </tr>
+  </thead>
+</table>
+<div id="toolbar">
+  <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUserDialog()">Dodaj użytkownika</a>
+  <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUserDialog()">Edytuj użytkownika</a>
+  <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteUser()">Usuń użytkownika</a>
+</div>
+
+<div id="dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+     closed="true" buttons="#dlg-buttons">
+  <form id="fm" name="fm" method="get" novalidate>
+    <div style="margin-bottom:5px;margin-top:10px">
+      <input name="firstName" label="Imię:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <div style="margin-bottom:5px">
+      <input name="lastName" label="Nazwisko:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <div style="margin-bottom:5px">
+      <input name="userName" label="Login:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <div style="margin-bottom:5px">
+      <input type="password" id="pass" name="password" label="Hasło:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <div style="margin-bottom:5px">
+      <select id="cc" style="width:75%" class="easyui-combobox" name="role" label="Rola:" limitToList="true" required="true">
+        <option value="admin">Administrator</option>
+        <option value="user">Zwykły użytkownik</option>
+      </select>
+    </div>
+    <input type="hidden" name="id"/>
+  </form>
+</div>
+<div id="dlg-buttons">
+  <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width:90px">Zapisz</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">Anuluj</a>
+</div>
+
+<script>
+  $(document).ready(function(){
+    $('#firstLastName').html(sessionStorage.getItem("firstName")+" "+sessionStorage.getItem("lastName"));
+  })
+
+
+  function newUserDialog(){
+    $('#dlg').dialog('open').dialog('setTitle','Nowy użytkownik');
+    $('#fm').form('clear');
+    url = '/api/user/add';
+  }
+  function editUserDialog(){
+    var row = $('#dg').datagrid('getSelected');
+    if (row){
+      $('#dlg').dialog('open').dialog('setTitle','Edytuj użytkownika');
+      $('#fm').form('load',row);
+      url = '/api/user/update';
+    }
+  }
+  function saveUser(){
+    var raw = $("input[name='password']").val();
+    var enc = CryptoJS.MD5(raw).toString();
+    $("input[name='password']").val(enc);
+    $.get(url,$("#fm").serialize())
+      .done(function(data){
+        if (data.serverError){
+          $.messager.show({
+            title: 'Błąd',
+            msg: data.serverError
+          });
+        } else {
+          $('#dlg').dialog('close');        // close the dialog
+          $('#dg').datagrid('reload');    // reload the user data
+        }
+      })
+  }
+  function deleteUser(){
+    var row = $('#dg').datagrid('getSelected');
+    if (row){
+      $.messager.confirm('Potwierdź','Czy na pewno chcesz usunąć wybranego użytkownika?',function(r){
+        if (r){
+          $.get('/api/user/delete',{id:row.id})
+            .done(function(data) {
+              if (data.serverError){
+                $.messager.show({    // show error message
+                  title: 'Błąd',
+                  msg: data.serverError
+                });
+              } else {
+                $('#dg').datagrid('reload');    // reload the user data
+              }
+            })
+        }
+      });
+    }
+  }
+</script>
+</body>
+</html>

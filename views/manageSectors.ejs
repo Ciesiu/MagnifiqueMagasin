@@ -1,0 +1,214 @@
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css">
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/demo/demo.css">
+  <link rel="stylesheet" type="text/css" href="https://www.jeasyui.com/easyui/themes/color.css">
+
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
+  <script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
+
+</head>
+<body>
+<div id="viewRow">
+  <div id="warehouseColumn" style="width:50%;float:left">
+    <table id="dg1" title="Magazyny" class="easyui-datagrid" style="width:550px;height:250px"
+           method="GET"
+           url="/api/warehouse/getAll"
+           toolbar="#toolbar1"
+           rownumbers="true" fitColumns="true" singleSelect="true">
+      <thead>
+      <tr>
+        <th field="id" width="50">ID</th>
+        <th field="name" width="50">Nazwa</th>
+        <th field="address" width="50">Adres</th>
+      </tr>
+      </thead>
+    </table>
+    <div id="toolbar1">
+      <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newWarehouseDialog()">Dodaj magazyn</a>
+      <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editWarehouseDialog()">Edytuj magazyn</a>
+      <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="removeWarehouse()">Usuń magazyn</a>
+    </div>
+  </div>
+  <div id="sectorColumn" style="margin-left:50%">
+    <table id="dg2" title="Sektory" class="easyui-datagrid" style="width:550px;height:250px"
+           method="GET"
+           url=""
+           toolbar="#toolbar2"
+           rownumbers="true" fitColumns="true" singleSelect="true">
+      <thead>
+      <tr>
+        <th field="id" width="50">ID</th>
+        <th field="name" width="50">Nazwa</th>
+      </tr>
+      </thead>
+    </table>
+    <div id="toolbar2">
+      <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newSectorDialog()">Dodaj sektor</a>
+      <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editSectorDialog()">Edytuj sektor</a>
+      <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="removeSector()">Usuń sektor</a>
+    </div>
+  </div>
+</div>
+
+<!--Okienka dialogowe-->
+<div id="dlg1" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+     closed="true" buttons="#dlg-buttons1">
+  <form id="fm1" method="get" novalidate>
+    <div style="margin-bottom:5px;margin-top:10px">
+      <input name="name" label="Nazwa:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <div style="margin-bottom:5px">
+      <input name="address" label="Adres:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <input type="hidden" name="id"/>
+  </form>
+</div>
+<div id="dlg-buttons1">
+  <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveWarehouse()" style="width:90px">Zapisz</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg1').dialog('close')" style="width:90px">Anuluj</a>
+</div>
+
+<div id="dlg2" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+     closed="true" buttons="#dlg-buttons2">
+  <form id="fm2" method="get" novalidate>
+    <div style="margin-bottom:5px;margin-top:10px">
+      <input name="name" label="Nazwa:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <input type="hidden" name="id"/>
+  </form>
+</div>
+<div id="dlg-buttons2">
+  <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveSector()" style="width:90px">Zapisz</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg2').dialog('close')" style="width:90px">Anuluj</a>
+</div>
+<!--Koniec Okienka dialogowe-->
+
+<script>
+  $('#dg1').datagrid({
+    onSelect: function(index,row){
+      $('#dg2').datagrid('load', '/api/sector/getWHSectors?whId='+row.id);
+    }
+  });
+
+
+  function newWarehouseDialog(){
+    $('#dlg1').dialog('open').dialog('setTitle','Nowy magazyn');
+    $('#fm1').form('clear');
+    url = '/api/warehouse/add';
+  }
+  function editWarehouseDialog(){
+    var row = $('#dg1').datagrid('getSelected');
+    if (row){
+      $('#dlg1').dialog('open').dialog('setTitle','Edytuj magazyn');
+      $('#fm1').form('load',row);
+      url = 'api/warehouse/edit';
+    }
+  }
+  function saveWarehouse(){
+    var row = $('#dg1').datagrid('getSelected');
+    var input = $("<input>")
+      .attr("type", "hidden")
+      .attr("name", "warehouseId").val(row.id);
+    $('#fm1').append($(input));
+
+    $('#fm1').form('submit',{
+      url: url,
+      success: function(data){
+        if (data.serverError){
+          $.messager.show({
+            title: 'Błąd',
+            msg: data.serverError
+          });
+        } else {
+          $('#dlg1').dialog('close');        // close the dialog
+          $('#dg1').datagrid('reload');    // reload the user data
+        }
+      }
+    });
+  }
+  function removeWarehouse(){
+    var row = $('#dg1').datagrid('getSelected');
+    if (row){
+      $.messager.confirm('Potwierdź','Czy na pewno chcesz usunąć wybrany magazyn?',function(r){
+        if (r){
+          $.get('/api/warehouse/delete',{warehouseId:row.id})
+            .done(function(data) {
+              if (data.serverError){
+                $.messager.show({    // show error message
+                  title: 'Błąd',
+                  msg: data.serverError
+                });
+              } else {
+                $('#dg1').datagrid('reload');    // reload the user data
+              }
+            })
+        }
+      });
+    }
+  }
+  function newSectorDialog(){
+    var row = $('#dg1').datagrid('getSelected');
+    if(row) {
+      $('#dlg2').dialog('open').dialog('setTitle', 'Nowy sektor');
+      $('#fm2').form('clear');
+      url = '/api/sector/add?warehouseId=' + row.id;
+    }
+  }
+  function editSectorDialog(){
+    var row = $('#dg2').datagrid('getSelected');
+    if (row){
+      $('#dlg2').dialog('open').dialog('setTitle','Edytuj sektor');
+      $('#fm2').form('load',row);
+      url = 'api/sector/edit';
+    }
+  }
+  function saveSector(){
+    var row = $('#dg1').datagrid('getSelected');
+    var input = $("<input>")
+      .attr("type", "hidden")
+      .attr("name", "warehouseId").val(row.id);
+    $('#fm2').append($(input));
+
+    $('#fm2').form('submit',{
+      url: url,
+      onSubmit: function(){
+        //disable button
+      },
+      success: function(data){
+        if (data.serverError){
+          $.messager.show({
+            title: 'Błąd',
+            msg: data.serverError
+          });
+        } else {
+          $('#dlg2').dialog('close');        // close the dialog
+          $('#dg2').datagrid('reload');    // reload the user data
+        }
+      }
+    });
+  }
+  function removeSector(){
+    var row = $('#dg2').datagrid('getSelected');
+    if (row){
+      $.messager.confirm('Potwierdź','Czy na pewno chcesz usunąć wybrany sektor?',function(r){
+        if (r){
+          $.get('/api/sector/delete',{sectorId:row.id})
+            .done(function(data) {
+              if (data.serverError){
+                $.messager.show({    // show error message
+                  title: 'Błąd',
+                  msg: data.serverError
+                });
+              } else {
+                $('#dg2').datagrid('reload');    // reload the user data
+              }
+            })
+        }
+      });
+    }
+  }
+</script>
+</body>
+</html>

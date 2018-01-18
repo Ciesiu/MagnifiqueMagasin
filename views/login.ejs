@@ -1,0 +1,58 @@
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css">
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/demo/demo.css">
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
+  <script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/core-min.js"></script>
+  <script type="text/javascript" src=" https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js"></script>
+
+
+</head>
+<body>
+
+<div class="easyui-panel" title="Logowanie" style="width:300px;padding:10px;">
+    <table>
+      <tr>
+        <td>Login:</td>
+        <td><input id="login" name="login" class="f1 easyui-textbox"></input></td>
+      </tr>
+      <tr>
+        <td>Hasło:</td>
+        <td><input type="password" id="password" name="pass" class="f1 easyui-textbox"></input></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td><input type="button" value=" Zaloguj " onclick="auth()" class="f1 easyui-linkbutton"></td>
+      </tr>
+    </table>
+</div>
+<script>
+
+
+  function auth(){
+    var login = $("#login").val();
+    var pass = $("#password").val();
+    pass = CryptoJS.MD5(pass).toString();
+    alert(pass);
+
+    var address = 'http://localhost:1337/api/user/check';
+
+    $.get(address,{login:login,password:pass})
+      .done(function(data){
+        if(data.found=='none') alert("Niepoprawny login lub hasło");
+        else{
+          sessionStorage.setItem('login',data.found.userName);
+          sessionStorage.setItem('role',data.found.role);
+          sessionStorage.setItem('firstName',data.found.firstName);
+          sessionStorage.setItem('lastName',data.found.lastName);
+
+          window.location.replace('/manageUsers');
+        }
+      })
+
+  }
+</script>
+</body>
+</html>
