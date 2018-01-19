@@ -17,16 +17,10 @@
         method: 'get',
         url: 'http://localhost:1337/api/warehouse/getAll',
         onSelect: function(rec){
-            var url = 'http://localhost:1337/api/sector/getWHSectors?whId='+rec.id;
-            $('#cc2').combobox('reload', url);
-        }">
-  <input id="cc2" class="easyui-combobox" data-options="
-        valueField:'id',
-        textField:'name',
-        method:'get',
-        onSelect: function(rec){
-            var url = 'http://localhost:1337/api/ware/getSecWares?secId='+rec.id;
+            var url = 'http://localhost:1337/api/ware/getWHWares?whId='+rec.id;
             $('#dg').datagrid('reload', url);
+            var url2 = 'http://localhost:1337/api/sector/getWHSectors?whId='+rec.id;
+            $('#cc2').combobox('reload', url2);
         }">
 </div>
 <div id="dataRow">
@@ -40,6 +34,7 @@
       <th field="name" width="50">Nazwa</th>
       <th field="quantity" width="50">Ilość</th>
       <th field="status" width="50">Status</th>
+      <th field="warehouseSector" width="50">Sektor</th>
     </tr>
     </thead>
   </table>
@@ -61,6 +56,13 @@
     </div>
     <div style="margin-bottom:5px">
       <input name="status" label="Status:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <div style="margin-bottom:5px">
+      <input id="cc2" class="easyui-combobox" label="Sektor" required="true" data-options="
+        valueField: 'id',
+        textField: 'name',
+        method: 'get',
+        ">
     </div>
     <input type="hidden" name="id"/>
   </form>
@@ -104,7 +106,7 @@
           $('#dg').datagrid('reload');    // reload the user data
         }
       }
-    });
+    });//*/
   }
   function deleteWare(){
     var row = $('#dg').datagrid('getSelected');

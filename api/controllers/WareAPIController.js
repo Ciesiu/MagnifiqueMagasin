@@ -7,6 +7,30 @@
 var request = require('request');
 
 module.exports = {
+  getWarehouseWares: function(req,res){
+      var whId = req.param("whId");
+    WarehouseAPI.findOne({id:whId}).populate('sectors').exec(function(err,found){
+      if(err){
+        return res.serverError(err);
+      }
+      var sectorIDs = [];
+      found.sectors.forEach(function(item){
+        sectorIDs.push(item.id);
+      })
+      //console.log(sectorIDs);
+      WareAPI.find({warehouseSector:sectorIDs}).populate('warehouseSector').exec(function(err,found){
+        if(err){
+          return res.serverError(err);
+        }
+        found.forEach(function(item){
+          item.warehouseSector = item.warehouseSector.name;
+        })
+        return res.json(found);
+      })
+      //return res.json(found.sectors);
+    })
+  },
+
   getSectorWares: function(req,res){
     var secId = req.param("secId");
     WareAPI.find({warehouseSector:secId}).exec(function(err,found){
@@ -25,16 +49,40 @@ module.exports = {
 
     var wareData = {};
     wareData['name'] = name;
-    wareData['quantity'] = quantity;
+    //wareData['quantity'] = quantity;
     wareData['status'] = status;
     wareData['warehouseSector'] = sectorId;
 
+    WareAPI.findOne(wareData).exec(function(err,found){
+      if(err){
+        return res.serverError(err);
+      }
+      //console.log(found);
+      if(found){
+        found.quantity = +found.quantity + +quantity;
+        found.save(function(err){
+          if(err){
+            return res.serverError(err);
+          }
+          return res.ok();
+        });
+      }else{
+        wareData['quantity'] = quantity;
+        WareAPI.create(wareData).exec(function(err,ware){
+          if (err) {
+            return res.serverError(err);
+          }
+          return res.ok();
+        })
+      }
+    })
+    /*
     WareAPI.create(wareData).exec(function(err,ware){
       if (err) {
         return res.serverError(err);
       }
       return res.ok();
-    })
+    })*/
   },
 
   removeWare: function(req,res){

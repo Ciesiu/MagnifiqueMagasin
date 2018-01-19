@@ -50,6 +50,7 @@ module.exports.routes = {
   'get /api/ware/add': 'WareAPIController.createNewWare',
   'get /api/ware/move': 'WareAPIController.moveWare',
   'get /api/ware/getSecWares': 'WareAPIController.getSectorWares',
+  'get /api/ware/getWHWares': 'WareAPIController.getWarehouseWares',
   'get /api/ware/edit': 'WareAPIController.editWare',
   'get /api/ware/delete': 'WareAPIController.removeWare',
 
