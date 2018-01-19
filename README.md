@@ -3,9 +3,9 @@
 a [Sails](http://sailsjs.org) application
 
 ## ToDo
-- [ ] poprawienie dodawania towaru - jeśli taki istnieje w danym sektorze to poprostu zwiększ jego ilosć
+- [x] poprawienie dodawania towaru - jeśli taki istnieje w danym sektorze to poprostu zwiększ jego ilosć
 
-- [ ] Przerobienie widoku zarządzania towarami (towary wyświetlane dla magazynu z sektorem jako pole, a nie dla sektora)
+- [x] Przerobienie widoku zarządzania towarami (towary wyświetlane dla magazynu z sektorem jako pole, a nie dla sektora)
 - [ ] Przenoszenie towaru/zmiana statusu (dialog)
 - [ ] Wyszukiwarka towarów
 - [ ] Przygotowywanie zamówienia do wydania (dialog)
