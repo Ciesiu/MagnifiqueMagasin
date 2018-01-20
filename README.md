@@ -16,4 +16,5 @@ a [Sails](http://sailsjs.org) application
 
 - [ ] Sklejenie nawigacji w całej aplikacji
 - [ ] Zmontowanie layoutu który nie będzie sie rozjeżdżał
+- [ ] Usuwanie kaskadowe
  
