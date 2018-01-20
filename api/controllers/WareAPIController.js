@@ -8,7 +8,11 @@ var request = require('request');
 
 module.exports = {
   getWarehouseWares: function(req,res){
-      var whId = req.param("whId");
+    var whId = req.param("whId");
+    var name = req.param("name");
+    var sectorId = req.param("sectorId");
+    var page = req.param("page");
+    var rows = req.param("rows");
     WarehouseAPI.findOne({id:whId}).populate('sectors').exec(function(err,found){
       if(err){
         return res.serverError(err);
@@ -18,15 +22,25 @@ module.exports = {
         sectorIDs.push(item.id);
       })
       //console.log(sectorIDs);
-      WareAPI.find({warehouseSector:sectorIDs}).populate('warehouseSector').exec(function(err,found){
+      var params = {};
+      params["warehouseSector"] = sectorIDs;
+      if(name) params["name"] = {contains: name};
+      if(sectorId) params["warehouseSector"] = sectorId;
+      WareAPI.count(params).exec(function(err,count){
         if(err){
           return res.serverError(err);
         }
-        found.forEach(function(item){
-          item.warehouseSector = item.warehouseSector.name;
+        WareAPI.find(params).populate('warehouseSector').paginate({page:page,limit:rows}).exec(function(err,found){
+          if(err){
+            return res.serverError(err);
+          }
+          found.forEach(function(item){
+            item["sectorName"] = item.warehouseSector.name;
+          })
+          return res.json({rows:found,total:count});
         })
-        return res.json(found);
       })
+
       //return res.json(found.sectors);
     })
   },
@@ -45,7 +59,7 @@ module.exports = {
     var name = req.param('name');
     var quantity = req.param('quantity');
     var status = req.param('status');
-    var sectorId = req.param('sectorId');
+    var sectorId = req.param('warehouseSector');
 
     var wareData = {};
     wareData['name'] = name;

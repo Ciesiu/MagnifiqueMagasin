@@ -15,6 +15,16 @@ module.exports = {
       return res.json(found.sectors);
     })
   },
+  getWHSectorsCombo: function(req,res){
+    var whId = req.param("whId");
+    WarehouseAPI.findOne({id:whId}).populate('sectors').exec(function(err,found){
+      if(err){
+        return res.serverError(err);
+      }
+      found.sectors.unshift({id:"",name:"wszystkie sektory", selected:"true"});
+      return res.json(found.sectors);
+    })
+  },
   addSector: function(req,res){
     var warehouseId = req.param('warehouseId');
     var sectorName = req.param('name');

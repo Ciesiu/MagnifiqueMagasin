@@ -58,12 +58,14 @@ module.exports.routes = {
 
   'get /api/warehouse/add': 'WarehouseAPIController.addWarehouse',
   'get /api/warehouse/getAll': 'WarehouseAPIController.getAllWarehouses',
+  'get /api/warehouse/getAllCombo': 'WarehouseAPIController.getAllWarehousesCombo',
   'get /api/warehouse/edit': 'WarehouseAPIController.editWarehouse',
   'get /api/warehouse/delete': 'WarehouseAPIController.removeWarehouse',
 
 
   'get /api/sector/add': 'WarehouseSectorAPIController.addSector',
   'get /api/sector/getWHSectors': 'WarehouseSectorAPIController.getWHSectors',
+  'get /api/sector/getWHSectorsCombo': 'WarehouseSectorAPIController.getWHSectorsCombo',
   'get /api/sector/edit': 'WarehouseSectorAPIController.editSector',
   'get /api/sector/delete': 'WarehouseSectorAPIController.removeSector',
 

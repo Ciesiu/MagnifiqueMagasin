@@ -10,38 +10,57 @@
 
 </head>
 <body>
-<div id="comboRow">
-  <input id="cc1" class="easyui-combobox" data-options="
-        valueField: 'id',
-        textField: 'name',
-        method: 'get',
-        url: 'http://localhost:1337/api/warehouse/getAll',
-        onSelect: function(rec){
-            var url = 'http://localhost:1337/api/ware/getWHWares?whId='+rec.id;
-            $('#dg').datagrid('reload', url);
-            var url2 = 'http://localhost:1337/api/sector/getWHSectors?whId='+rec.id;
-            $('#cc2').combobox('reload', url2);
-        }">
-</div>
+
 <div id="dataRow">
-  <table id="dg" title="Towary" class="easyui-datagrid" style="width:550px;height:250px"
-         method="GET"
-         toolbar="#toolbar"
-         rownumbers="true" fitColumns="true" singleSelect="true">
+  <table id="dg" title="Towary" style="width:40%;min-height:414px"
+       class="easyui-datagrid"
+       method="GET"
+       toolbar="#toolbar"
+       rownumbers="true"
+       fitColumns="true"
+       singleSelect="true"
+       pagination="true">
     <thead>
     <tr>
-      <th field="id" width="50">ID</th>
+      <th field="id" width="15">ID</th>
       <th field="name" width="50">Nazwa</th>
-      <th field="quantity" width="50">Ilość</th>
-      <th field="status" width="50">Status</th>
-      <th field="warehouseSector" width="50">Sektor</th>
+      <th field="quantity" width="25">Ilość</th>
+      <th field="status" width="25">Status</th>
+      <th field="sectorName" width="50">Sektor</th>
     </tr>
     </thead>
   </table>
   <div id="toolbar">
+    <input id="cc1" class="easyui-combobox" style="width:250px;" editable="false" label="Magazyn:" data-options="
+        valueField: 'id',
+        textField: 'name',
+        method: 'get',
+        url: 'http://localhost:1337/api/warehouse/getAllCombo',
+        onSelect: function(rec){
+            var url = 'http://localhost:1337/api/ware/getWHWares?whId='+rec.id;
+            var url2 = 'http://localhost:1337/api/sector/getWHSectorsCombo?whId='+rec.id;
+            var url3 = 'http://localhost:1337/api/sector/getWHSectors?whId='+rec.id;
+            $('#dg').datagrid('reload', url);
+            $('#cc2').combobox('reload', url2);
+            $('#cc3').combobox('reload', url3);
+        }">
+    <input id="cc2" class="easyui-combobox" style="width:250px;" editable="false" label="Sektor:" data-options="
+        valueField: 'id',
+        textField: 'name',
+        method: 'get',
+        onSelect: function(rec){
+          $('#dg').datagrid('load',{
+              sectorId: rec.id
+          });
+        }
+        "/></br>
+    <span>Nazwa:</span>
+    <input id="itemName" style="border:1px solid #ccc">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doSearch()">Wyszukaj</a></br>
     <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addWareDialog()">Dodaj towar</a>
     <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editWareDialog()">Edytuj towar</a>
     <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteWare()">Usuń towar</a>
+
   </div>
 </div>
 
@@ -58,7 +77,7 @@
       <input name="status" label="Status:" style="width:100%" class="easyui-textbox" required="true">
     </div>
     <div style="margin-bottom:5px">
-      <input id="cc2" class="easyui-combobox" label="Sektor" required="true" data-options="
+      <input id="cc3" name="warehouseSector" class="easyui-combobox" style="width:250px;" editable="false" label="Sektor" required="true" data-options="
         valueField: 'id',
         textField: 'name',
         method: 'get',
@@ -72,7 +91,15 @@
   <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">Anuluj</a>
 </div>
 
+<!--dialog od zamówienia-->
+
 <script>
+  function doSearch(){
+    $('#dg').datagrid('load',{
+      name: $('#itemName').val(),
+      sectorId: $('#cc2').val()
+    });
+  }
   function addWareDialog(){
     $('#dlg').dialog('open').dialog('setTitle','Nowy towar');
     $('#fm').form('clear');
@@ -87,11 +114,12 @@
     }
   }
   function saveWare(){
-    var sectorId = $('#cc2').val();
+    /*var sectorId = $('#cc3').val();
     var input = $("<input>")
       .attr("type", "hidden")
-      .attr("name", "sectorId").val(sectorId);
-    $('#fm').append($(input));
+      .attr("name", "sectorId").val(sectorId)
+      .attr("id","fakeField");
+    $('#fm').append($(input));*/
 
     $('#fm').form('submit',{
       url: url,
@@ -105,6 +133,7 @@
           $('#dlg').dialog('close');        // close the dialog
           $('#dg').datagrid('reload');    // reload the user data
         }
+        $('#fakeField').remove();
       }
     });//*/
   }

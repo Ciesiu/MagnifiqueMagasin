@@ -14,6 +14,15 @@ module.exports = {
       return res.json(found);
     })
   },
+  getAllWarehousesCombo: function(req,res){
+    WarehouseAPI.find({}).exec(function(err,found){
+      if(err){
+        return res.serverError(err);
+      }
+      found[0]['selected'] = "true";
+      return res.json(found);
+    })
+  },
   addWarehouse: function(req,res){
     var name = req.param('name');
     var address = req.param('address');
