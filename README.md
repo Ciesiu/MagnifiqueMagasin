@@ -18,3 +18,4 @@ a [Sails](http://sailsjs.org) application
 - [ ] Zmontowanie layoutu który nie będzie sie rozjeżdżał
 - [ ] Usuwanie kaskadowe
  
+- [ ] raporty
