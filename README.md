@@ -8,8 +8,8 @@ a [Sails](http://sailsjs.org) application
 - [x] Przerobienie widoku zarządzania towarami (towary wyświetlane dla magazynu z sektorem jako pole, a nie dla sektora)
 - [x] Przenoszenie towaru/zmiana statusu (dialog)
 - [x] Wyszukiwarka towarów
-- [ ] Przygotowywanie zamówienia do wydania (dialog)
-- [ ] Przygotowanie zapotrzebowania (dialog; wykorzystać ten z wyżej?)
+- [ ] Przygotowywanie zamówienia do wydania (na manage wares)
+- [ ] Przygotowanie zapotrzebowania (dialog)
 
 - [ ] Przerobienie towaru (typ: sprzęt/material)
 - [ ] Dostosowanie modelu zamówienia (przechowuje dane pobierającego wraz z danymi kontaktowymi)
@@ -20,5 +20,5 @@ a [Sails](http://sailsjs.org) application
  
 - [ ] raporty
 
-- [ ] unikalne loginy i nazwy magazynów
-- [ ] zmiana własnego hasła
+- [x] unikalne loginy i nazwy magazynów
+- [x] zmiana własnego hasła
