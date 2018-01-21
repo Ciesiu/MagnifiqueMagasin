@@ -19,3 +19,5 @@ a [Sails](http://sailsjs.org) application
 - [ ] Usuwanie kaskadowe
  
 - [ ] raporty
+
+- [ ] unikalne loginy i nazwy magazynów
