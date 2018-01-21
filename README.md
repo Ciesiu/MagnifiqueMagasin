@@ -11,8 +11,8 @@ a [Sails](http://sailsjs.org) application
 - [ ] Przygotowywanie zamówienia do wydania (na manage wares)
 - [ ] Przygotowanie zapotrzebowania (dialog)
 
-- [ ] Przerobienie towaru (typ: sprzęt/material)
-- [ ] Dostosowanie modelu zamówienia (przechowuje dane pobierającego wraz z danymi kontaktowymi)
+- [x] Przerobienie towaru (typ: sprzęt/material)
+- [x] Dostosowanie modelu zamówienia (przechowuje dane pobierającego wraz z danymi kontaktowymi)
 
 - [ ] Sklejenie nawigacji w całej aplikacji
 - [ ] Zmontowanie layoutu który nie będzie sie rozjeżdżał
