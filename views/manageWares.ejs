@@ -10,7 +10,9 @@
 
 </head>
 <body>
-
+<div id="navBar">
+  <%- partial('./navbar.ejs') %>
+</div>
 <div id="dataRow">
   <table id="dg" title="Towary" style="width:40%;min-height:414px"
        class="easyui-datagrid"
@@ -94,6 +96,7 @@
 <!--dialog od zamówienia-->
 
 <script>
+
   function doSearch(){
     $('#dg').datagrid('load',{
       name: $('#itemName').val(),

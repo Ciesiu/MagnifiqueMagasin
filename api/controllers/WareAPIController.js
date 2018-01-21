@@ -18,6 +18,7 @@ module.exports = {
         return res.serverError(err);
       }
       var sectorIDs = [];
+      if(!found) return res.json({});
       found.sectors.forEach(function(item){
         sectorIDs.push(item.id);
       })

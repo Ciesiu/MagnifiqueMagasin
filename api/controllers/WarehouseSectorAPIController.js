@@ -12,6 +12,7 @@ module.exports = {
       if(err){
         return res.serverError(err);
       }
+      if(!found) return res.json({});
       return res.json(found.sectors);
     })
   },
@@ -54,11 +55,21 @@ module.exports = {
   },
   removeSector: function(req,res){
     var sectorId = req.param('sectorId');
-    WarehouseSectorAPI.destroy({id: sectorId}).exec(function(err){
+    WarehouseSectorAPI.findOne({id:sectorId}).populate("wares").exec(function(err,found){
       if(err){
         return res.serverError(err);
       }
-      return res.ok();
+      if(found.wares.length==0){
+        WarehouseSectorAPI.destroy({id: sectorId}).exec(function(err){
+          if(err){
+            return res.serverError(err);
+          }
+          return res.ok();
+        })
+      }
+      else{
+        return res.serverError("Nie można usunąć - w sektorze znajduje się towar");
+      }
     })
   }
 

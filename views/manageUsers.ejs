@@ -13,6 +13,9 @@
 
 </head>
 <body>
+<div id="navBar">
+  <%- partial('./navbar.ejs') %>
+</div>
 <div>
   <h2>Zalogowano jako: <div id="firstLastName"></div></h2>
 </div>
@@ -53,7 +56,7 @@
       <input type="password" id="pass" name="password" label="Hasło:" style="width:100%" class="easyui-textbox" required="true">
     </div>
     <div style="margin-bottom:5px">
-      <select id="cc" style="width:75%" class="easyui-combobox" name="role" label="Rola:" limitToList="true" required="true">
+      <select id="cc" style="width:75%" class="easyui-combobox" name="role" editable="false" label="Rola:" limitToList="true" required="true">
         <option value="admin">Administrator</option>
         <option value="user">Zwykły użytkownik</option>
       </select>
@@ -100,6 +103,12 @@
           $('#dlg').dialog('close');        // close the dialog
           $('#dg').datagrid('reload');    // reload the user data
         }
+      })
+      .fail(function(data){
+        $.messager.show({    // show error message
+          title: 'Błąd',
+          msg: data.responseText
+        });
       })
   }
   function deleteUser(){

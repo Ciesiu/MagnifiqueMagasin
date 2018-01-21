@@ -74,6 +74,7 @@ module.exports.routes = {
   'get /api/user/getAll': 'LoginAPIController.getAllUsers',
   'get /api/user/update': 'LoginAPIController.updateUser',
   'get /api/user/delete': 'LoginAPIController.removeUser',
+  'get /api/user/changePasswd': 'LoginAPIController.changePasswd',
 
   '/login':{
     view: 'login'

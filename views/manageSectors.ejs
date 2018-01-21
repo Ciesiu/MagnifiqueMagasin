@@ -10,6 +10,9 @@
 
 </head>
 <body>
+<div id="navBar">
+  <%- partial('./navbar.ejs') %>
+</div>
 <div id="viewRow">
   <div id="warehouseColumn" style="width:50%;float:left">
     <table id="dg1" title="Magazyny" class="easyui-datagrid" style="width:550px;height:250px"
@@ -86,6 +89,7 @@
 <!--Koniec Okienka dialogowe-->
 
 <script>
+
   $('#dg1').datagrid({
     onSelect: function(index,row){
       $('#dg2').datagrid('load', '/api/sector/getWHSectors?whId='+row.id);
@@ -108,13 +112,20 @@
   }
   function saveWarehouse(){
     var row = $('#dg1').datagrid('getSelected');
-    var input = $("<input>")
-      .attr("type", "hidden")
-      .attr("name", "warehouseId").val(row.id);
-    $('#fm1').append($(input));
-
+    if(row) {
+      var input = $("<input>")
+        .attr("type", "hidden")
+        .attr("name", "warehouseId").val(row.id);
+      $('#fm1').append($(input));
+    }
     $('#fm1').form('submit',{
       url: url,
+      fail: function(data){
+          $.messager.show({    // show error message
+            title: 'Błąd',
+            msg: data.responseText
+          });
+      },
       success: function(data){
         if (data.serverError){
           $.messager.show({
@@ -141,8 +152,15 @@
                   msg: data.serverError
                 });
               } else {
-                $('#dg1').datagrid('reload');    // reload the user data
+                $('#dg1').datagrid('reload');    // reload the user data\
+                $('#dg2').datagrid('loadData',[]);
               }
+            })
+            .fail(function(data){
+              $.messager.show({    // show error message
+                title: 'Błąd',
+                msg: data.responseText
+              });
             })
         }
       });
@@ -176,6 +194,12 @@
       onSubmit: function(){
         //disable button
       },
+      fail: function(data){
+        $.messager.show({    // show error message
+          title: 'Błąd',
+          msg: data.responseText
+        });
+      },
       success: function(data){
         if (data.serverError){
           $.messager.show({
@@ -187,6 +211,7 @@
           $('#dg2').datagrid('reload');    // reload the user data
         }
       }
+
     });
   }
   function removeSector(){
@@ -204,6 +229,12 @@
               } else {
                 $('#dg2').datagrid('reload');    // reload the user data
               }
+            })
+            .fail(function(data){
+              $.messager.show({    // show error message
+                title: 'Błąd',
+                msg: data.responseText
+              });
             })
         }
       });

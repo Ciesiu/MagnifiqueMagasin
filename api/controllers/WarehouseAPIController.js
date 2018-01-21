@@ -30,43 +30,61 @@ module.exports = {
     var wareData = {};
     wareData['name'] = name;
     wareData['address'] = address;
-
-    WarehouseAPI.create(wareData).exec(function(err,warehouse){
+    WarehouseAPI.find({name:name}).exec(function(err,found){
       if(err){
-        return res.serverError(err);
+        return res.serverError(err)
       }
-      //return res.json({created: warehouse.id});
-      WarehouseSectorAPI.create({name:'Rampa',warehouse:warehouse}).exec(function(err,sector){
-        if(err){
-          return res.serverError(err);
-        }
-        return res.ok();
-      })
+      if(found.length>0){
+        return res.serverError("Magazyn o podanej nazwie już istnieje");
+      }
+      else{
+        WarehouseAPI.create(wareData).exec(function(err,warehouse){
+          if(err){
+            return res.serverError(err);
+          }
+          //return res.json({created: warehouse.id});
+          WarehouseSectorAPI.create({name:'Rampa',warehouse:warehouse}).exec(function(err,sector){
+            if(err){
+              return res.serverError(err);
+            }
+            return res.ok();
+          })
+        })
+      }
     })
   },
 
   removeWarehouse: function(req,res){
     var warehouseId = req.param('warehouseId');
-    WarehouseSectorAPI.find({warehouse: warehouseId}).exec(function(err,found){
-      if(err){
+    WarehouseSectorAPI.find({warehouse: warehouseId}).populate("wares").exec(function(err,found) {
+      if (err) {
         return res.serverError(err);
       }
       var secIDs = [];
-      found.forEach(function(item){
+      var canRemove = true;
+      found.forEach(function (item) {
+        if (item.wares.length > 0){
+          canRemove = false;
+        }
         secIDs.push(item.id);
       })
-      WarehouseAPI.destroy({id: warehouseId}).exec(function(err){
-        if(err){
-          return res.serverError(err);
-        }
-        //return res.json({updated: warehouseId});
-        WarehouseSectorAPI.destroy({id:secIDs}).exec(function(err){
-          if(err){
+      if (canRemove){
+        WarehouseAPI.destroy({id: warehouseId}).exec(function (err) {
+          if (err) {
             return res.serverError(err);
           }
-          return res.ok();
+          //return res.json({updated: warehouseId});
+          WarehouseSectorAPI.destroy({id: secIDs}).exec(function (err) {
+            if (err) {
+              return res.serverError(err);
+            }
+            return res.ok();
+          })
         })
-      })
+    }
+    else{
+        return res.serverError("Nie można usunać - w magazynie znajduje się towar")
+      }
     })
 
 

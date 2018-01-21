@@ -115,6 +115,29 @@ module.exports = {
     })
   },
 
+  changePasswd: function(req,res){
+    var id = req.param("id");
+    var oldPass = req.param("oldPassword");
+    var newPass = req.param("newPassword");
+
+    LoginAPI.findOne({id:id,password:oldPass}).exec(function(err,found){
+      if(err){
+        return res.serverError(err);
+      }
+      if(found){
+        LoginAPI.update({id:id},{password:newPass}).exec(function(err){
+          if(err){
+            return res.serverError(err);
+          }
+          return res.ok();
+        })
+      }
+      else{
+        return res.serverError("Podano błędne hasło");
+      }
+    })
+  },
+
   getAllUsers: function(req,res){
     LoginAPI.find({}).exec(function(err,found){
       if(err){
@@ -148,12 +171,21 @@ module.exports = {
     userData['firstName'] = firstName;
     userData['lastName'] = lastName;
     userData['role'] = role;
-
-    LoginAPI.create(userData).exec(function(err,user){
-      if (err) {
+    LoginAPI.find({userName:login}).exec(function(err,found){
+      if(err){
         return res.serverError(err);
       }
-      return res.ok();
+      if(found.length>0){
+        return res.serverError("Podany login jest już zajęty");
+      }
+      else{
+        LoginAPI.create(userData).exec(function(err,user){
+          if (err) {
+            return res.serverError(err);
+          }
+          return res.ok();
+        })
+      }
     })
   },
 
