@@ -21,3 +21,4 @@ a [Sails](http://sailsjs.org) application
 - [ ] raporty
 
 - [ ] unikalne loginy i nazwy magazynów
+- [ ] zmiana własnego hasła
