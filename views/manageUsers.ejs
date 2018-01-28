@@ -16,9 +16,6 @@
 <div id="navBar">
   <%- partial('./navbar.ejs') %>
 </div>
-<div>
-  <h2>Zalogowano jako: <div id="firstLastName"></div></h2>
-</div>
 <table id="dg" title="Użytkownicy" class="easyui-datagrid" style="width:550px;height:250px"
        method="GET"
        url="/api/user/getAll"
@@ -41,7 +38,7 @@
 </div>
 
 <div id="dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
-     closed="true" buttons="#dlg-buttons">
+     closed="true" modal="true" buttons="#dlg-buttons">
   <form id="fm" name="fm" method="get" novalidate>
     <div style="margin-bottom:5px;margin-top:10px">
       <input name="firstName" label="Imię:" style="width:100%" class="easyui-textbox" required="true">
@@ -70,9 +67,7 @@
 </div>
 
 <script>
-  $(document).ready(function(){
-    $('#firstLastName').html(sessionStorage.getItem("firstName")+" "+sessionStorage.getItem("lastName"));
-  })
+
 
 
   function newUserDialog(){

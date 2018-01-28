@@ -1,13 +1,27 @@
-
-
+<style>
+  .menu-button{
+    width:170px;
+    height:30px;
+    font-size:15px;
+    font-weight:bold;
+  }
+  .selected{
+    border-width: 2px;
+    border-color: gold;
+  }
+</style>
 <div>
-  <input type="button" value="pos1">
-  <input type="button" value="pos2">
-  <input type="button" value="pos3">
-  <input type="button" value="pos4">
-  </br>
-  <input type="button" value="Zmień hasło" onclick="changePasswdDialog()">
+  <input type="button" class="easyui-linkbutton menu-button selected" value="Magazyny i sektory">
+  <input type="button" class="easyui-linkbutton menu-button" value="Użytkownicy">
+  <input type="button" class="easyui-linkbutton menu-button" value="Towary i zamówienia">
+  <input type="button" class="easyui-linkbutton menu-button" value="Raporty">
 </div>
+<div>
+  <h3 style="display:inline-block">Zalogowano jako: <span id="firstLastName"></span></h3>
+  <input type="button" style="" class="easyui-linkbutton" value=" Zmień hasło " onclick="changePasswdDialog()">
+  <input type="button" style="" class="easyui-linkbutton" value=" Wyloguj " onclick="logout()">
+</div>
+
 
 <div id="passdlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
      closed="true" buttons="#passdlg-buttons">
@@ -28,6 +42,18 @@
   <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#passdlg').dialog('close')" style="width:90px">Anuluj</a>
 </div>
 <script>
+  $(document).ready(function(){
+    $('#firstLastName').html(sessionStorage.getItem("firstName")+" "+sessionStorage.getItem("lastName"));
+  })
+  function logout(){
+    sessionStorage.removeItem('login');
+    sessionStorage.removeItem('role');
+    sessionStorage.removeItem('firstName');
+    sessionStorage.removeItem('lastName');
+    sessionStorage.removeItem('id');
+
+    window.location.replace('/login');
+  }
   function changePasswdDialog(){
     $('#passdlg').dialog('open').dialog('setTitle','Zmiana hasła');
     $('#passfm').form('clear');
@@ -44,7 +70,7 @@
       var newPassEnc = CryptoJS.MD5(newPassRaw).toString();
       $.get(url,{id:id,oldPassword:oldPassEnc,newPassword:newPassEnc})
         .done(function(data){
-          $('#dlg').dialog('close');
+          $('#passdlg').dialog('close');
           $.messager.show({    // show error message
             title: 'OK',
             msg: "Poprawnie zmieniono hasło"

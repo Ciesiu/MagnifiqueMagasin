@@ -6,46 +6,66 @@
  */
 
 module.exports = {
+  getOrders: function(req,res){
+    OrderAPI.find({}).exec(function(err,found){
+      if(err){
+        return res.serverError(err);
+      }
+      return res.json(found);
+    })
+  },
   newOrder: function(req,res){
-    var wares = req.param('wares');
-    var personName = req.param('personName');
+    var personName = req.param('user');
 
     var orderData = {};
     orderData['user'] = personName;
-    orderData['status'] = 'pending';
+    orderData['status'] = 'preparing';
     OrderAPI.create(orderData).exec(function(err,order){
       if(err){
         return res.serverError(err);
       }
-      var query = [];
-      wares.forEach(function(item,index){
-        query.push({id: item});
-      })
-      WareAPI.find({or: query}).exec(function(err,found){
-        if(err){
-          return res.serverError(err);
-        }
-        found.forEach(function(item,index){
-          order.wares.add(item);
-        })
-        order.save(function(err){
-          if(err){
-            return res.serverError(err);
-          }
-          return res.json({created: order.id});
-        })
-      })
+      return res.ok();
     })
   },
-  changeOrderStatus: function(req,res){
-    var orderId = req.param('orderId');
-    var newStatus = req.param('newStatus');
+  editOrder: function(req,res){
+    var orderId = req.param('id');
+    var newStatus = req.param('status');
+    var newUser = req.param('user');
 
-    OrderAPI.update({id: orderId},{status: newStatus}).exec(function(err){
+    var orderData = {};
+    if(newStatus) orderData['status'] = newStatus;
+    if(newUser) orderData['user'] = newUser;
+
+    OrderAPI.update({id: orderId},orderData).exec(function(err){
       if(err){
         res.serverError(err);
       }
-      res.json({updated: orderId});
+      res.ok();
+    })
+  },
+  removeOrder: function(req,res){
+    var id = req.param('id');
+    OrderAPI.findOne({id:id}).populate("wares").exec(function(err,found){
+      if(err){
+        return res.serverError(err);
+      }
+      if(found){
+        found.wares.forEach(function(item){
+          item.status = "available";
+        })
+        found.save(function(err){
+          if(err){
+            return res.serverError(err);
+          }
+          OrderAPI.destroy({id:id}).exec(function(err){
+            if(err){
+              return res.serverError(err);
+            }
+            return res.ok();
+          })
+        })
+      }
+      else return res.ok();
     })
   }
 };

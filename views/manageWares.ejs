@@ -14,60 +14,95 @@
   <%- partial('./navbar.ejs') %>
 </div>
 <div id="dataRow">
-  <table id="dg" title="Towary" style="width:40%;min-height:414px"
-       class="easyui-datagrid"
-       method="GET"
-       toolbar="#toolbar"
-       rownumbers="true"
-       fitColumns="true"
-       singleSelect="true"
-       pagination="true">
-    <thead>
-    <tr>
-      <th field="id" width="15">ID</th>
-      <th field="name" width="50">Nazwa</th>
-      <th field="quantity" width="25">Ilość</th>
-      <th field="status" width="25">Status</th>
-      <th field="sectorName" width="50">Sektor</th>
-    </tr>
-    </thead>
-  </table>
-  <div id="toolbar">
-    <input id="cc1" class="easyui-combobox" style="width:250px;" editable="false" label="Magazyn:" data-options="
-        valueField: 'id',
-        textField: 'name',
-        method: 'get',
-        url: 'http://localhost:1337/api/warehouse/getAllCombo',
-        onSelect: function(rec){
-            var url = 'http://localhost:1337/api/ware/getWHWares?whId='+rec.id;
-            var url2 = 'http://localhost:1337/api/sector/getWHSectorsCombo?whId='+rec.id;
-            var url3 = 'http://localhost:1337/api/sector/getWHSectors?whId='+rec.id;
-            $('#dg').datagrid('reload', url);
-            $('#cc2').combobox('reload', url2);
-            $('#cc3').combobox('reload', url3);
-        }">
-    <input id="cc2" class="easyui-combobox" style="width:250px;" editable="false" label="Sektor:" data-options="
-        valueField: 'id',
-        textField: 'name',
-        method: 'get',
-        onSelect: function(rec){
-          $('#dg').datagrid('load',{
-              sectorId: rec.id
-          });
-        }
-        "/></br>
-    <span>Nazwa:</span>
-    <input id="itemName" style="border:1px solid #ccc">
-    <a href="#" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doSearch()">Wyszukaj</a></br>
-    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addWareDialog()">Dodaj towar</a>
-    <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editWareDialog()">Edytuj towar</a>
-    <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteWare()">Usuń towar</a>
+  <div id="leftColumn" style="width:45%;float:left">
+    <table id="dg" title="Towary" style="width:100%;min-height:414px"
+         class="easyui-datagrid"
+         method="GET"
+         toolbar="#toolbar"
+         rownumbers="true"
+         fitColumns="true"
+         singleSelect="true"
+         pagination="true">
+      <thead>
+      <tr>
+        <th field="id" width="15">ID</th>
+        <th field="name" width="50">Nazwa</th>
+        <th field="quantity" width="25">Ilość</th>
+        <th field="status" width="25">Status</th>
+        <th field="sectorName" width="50">Sektor</th>
+      </tr>
+      </thead>
+    </table>
+    <div id="toolbar">
+      <input id="cc1" class="easyui-combobox" style="width:250px;" editable="false" label="Magazyn:" data-options="
+          valueField: 'id',
+          textField: 'name',
+          method: 'get',
+          url: 'http://localhost:1337/api/warehouse/getAllCombo',
+          onSelect: function(rec){
+              var url = 'http://localhost:1337/api/ware/getByWarehouse?whId='+rec.id;
+              var url2 = 'http://localhost:1337/api/sector/getWHSectorsCombo?whId='+rec.id;
+              var url3 = 'http://localhost:1337/api/sector/getWHSectors?whId='+rec.id;
+              $('#dg').datagrid('reload', url);
+              $('#cc2').combobox('reload', url2);
+              $('#cc3').combobox('reload', url3);
+          }">
+      <input id="cc2" class="easyui-combobox" style="width:250px;" editable="false" label="Sektor:" data-options="
+          valueField: 'id',
+          textField: 'name',
+          method: 'get',
+          onSelect: function(rec){
+            $('#dg').datagrid('load',{
+                sectorId: rec.id
+            });
+          }
+          "/></br>
+      <span>Nazwa:</span>
+      <input id="itemName" style="border:1px solid #ccc">
+      <a href="#" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="doSearch()">Wyszukaj</a></br>
+      <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addWareDialog()">Dodaj towar</a>
+      <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editWareDialog()">Edytuj towar</a>
+      <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteWare()">Usuń towar</a>
+      <a href="#" class="easyui-linkbutton" iconCls="icon-redo" plain="true" onclick="openMoveDialog()">Przenieś towar</a>
 
+
+    </div>
+  </div>
+  <div id="centerColumn" style="width:10%;float:left">
+    <div id="buttons" style="padding-top:120%;width:25px;margin:auto">
+      <input type="button" value=">" style="width:100%" onclick="addWareToOrderDialog()"></br></br>
+      <input type="button" value="<" style="width:100%" onclick="removeWareFromOrder()">
+    </div>
+  </div>
+  <div id="rightColumn" style="width:45%;float:left">
+    <table id="dg2" title="Zamówienie" style="width:100%;min-height:414px"
+           class="easyui-datagrid"
+           method="GET"
+           toolbar="#toolbar2"
+           rownumbers="true"
+           fitColumns="true"
+           singleSelect="true"
+           pagination="true">
+      <thead>
+      <tr>
+        <th field="id" width="15">ID</th>
+        <th field="name" width="50">Nazwa</th>
+        <th field="quantity" width="25">Ilość</th>
+        <th field="status" width="25">Status</th>
+        <th field="sectorName" width="50">Sektor</th>
+      </tr>
+      </thead>
+    </table>
+    <div id="toolbar2">
+      Wybrane zamówienie: <input id="chosenOrder" disabled="true" value="brak">
+      <a href="#" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="openOrderDialog()">Zmień</a></br>
+
+    </div>
   </div>
 </div>
 
 <div id="dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
-     closed="true" buttons="#dlg-buttons">
+     closed="true" modal="true" buttons="#dlg-buttons">
   <form id="fm" name="fm" method="get" novalidate>
     <div style="margin-bottom:5px;margin-top:10px">
       <input name="name" label="Nazwa:" style="width:100%" class="easyui-textbox" required="true">
@@ -75,10 +110,14 @@
     <div style="margin-bottom:5px">
       <input name="quantity" label="Ilość:" style="width:100%" class="easyui-textbox" required="true">
     </div>
-    <div style="margin-bottom:5px">
-      <input name="status" label="Status:" style="width:100%" class="easyui-textbox" required="true">
+    <div id="hidableWare" style="margin-bottom:5px;display:none">
+      <select id="cc4" style="width:250px" class="easyui-combobox" name="status" editable="false" label="Status:" limitToList="true" required="true">
+        <option value="dostepne">dostepne</option>
+        <option value="zamowione">zamowione</option>
+        <option value="niedostepne">niedostepne</option>
+      </select>
     </div>
-    <div style="margin-bottom:5px">
+    <div id="hidableSector" style="margin-bottom:5px">
       <input id="cc3" name="warehouseSector" class="easyui-combobox" style="width:250px;" editable="false" label="Sektor" required="true" data-options="
         valueField: 'id',
         textField: 'name',
@@ -94,9 +133,227 @@
 </div>
 
 <!--dialog od zamówienia-->
+<div id="dlg2" class="easyui-dialog" style="width:50%;padding:10px 20px"
+     closed="true" modal="true" buttons="#dlg-buttons2">
+    <!--datagrid-->
+  <table id="dg3" title="Zamówienia" style="width:100%;min-height:414px"
+         class="easyui-datagrid"
+         method="GET"
+         toolbar="#toolbar3"
+         rownumbers="true"
+         fitColumns="true"
+         singleSelect="true"
+         pagination="true">
+    <thead>
+    <tr>
+      <th field="id" width="10">ID</th>
+      <th field="status" width="20">Status</th>
+      <th field="user" width="50">Odbiorca</th>
+    </tr>
+    </thead>
+  </table>
+  <div id="toolbar3">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newOrderDialog()">Nowe zamówienie</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editOrderDialog()">Edytuj zamówienie</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="removeOrder()">Usuń zamówienie</a>
+  </div>
+  <!-- /datagrid -->
+</div>
+<div id="dlg-buttons2">
+  <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="chooseOrder()" style="width:90px">Akceptuj</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg2').dialog('close')" style="width:90px">Anuluj</a>
+</div>
+
+<div id="dlg3" class="easyui-dialog" style="width:50%;padding:10px 20px"
+     closed="true" modal="true" buttons="#dlg-buttons3">
+  <form id="fm2" method="get" novalidate>
+    <div style="margin-bottom:5px;margin-top:10px">
+      <input name="user" label="Odbiorca:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <div id="hidableOrder" style="margin-bottom:5px">
+      <select id="cc5" style="width:75%" class="easyui-combobox" name="status" editable="false" label="Status:" limitToList="true" required="true">
+        <option value="otwarte" selected="true">otwarte</option>
+        <option value="gotowe">gotowe</option>
+        <option value="zamkniete">zamkniete</option>
+      </select>
+    </div>
+    <input type="hidden" name="id"/>
+  </form>
+</div>
+<div id="dlg-buttons3">
+  <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveOrder()" style="width:90px">Zapisz</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg3').dialog('close')" style="width:90px">Anuluj</a>
+</div>
+
+<div id="dlg4" class="easyui-dialog" style="width:50%;padding:10px 20px"
+     closed="true" modal="true" buttons="#dlg-buttons4">
+  <form id="fm4" method="get" novalidate>
+    <div style="margin-bottom:5px;margin-top:10px;display:inline-block">
+      Towar: <input name="name" readonly style="width:150px;border:none;font-weight:bold"><!--label="Towar:" class="easyui-textbox">-->
+    </div>
+    <div style="margin-bottom:5px;margin-top:10px">
+      <input name="quantity" label="Ilość:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <input type="hidden" name="id"/>
+  </form>
+</div>
+<div id="dlg-buttons4">
+  <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="addWareToOrder()" style="width:90px">OK</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg4').dialog('close')" style="width:90px">Anuluj</a>
+</div>
+
+<div id="dlgMove" class="easyui-dialog" style="width:50%;padding:10px 20px"
+     closed="true" modal="true" buttons="#dlg-buttonsMove">
+  <form id="fmMove" method="get" novalidate>
+    <div style="margin-bottom:5px;margin-top:10px;display:inline-block">
+      Towar: <input name="name" readonly style="border:none;font-weight:bold">
+    </div>
+    <div style="margin-bottom:5px;margin-top:10px">
+      <input name="quantity" label="Ilość:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <div style="margin-bottom:5px">
+      <input id="ccMove1" class="easyui-combobox" style="width:250px;" editable="false" label="Magazyn:" data-options="
+            valueField: 'id',
+            textField: 'name',
+            method: 'get',
+            url: 'http://localhost:1337/api/warehouse/getAllCombo',
+            onSelect: function(rec){
+                var url = 'http://localhost:1337/api/sector/getWHSectors?whId='+rec.id;
+                $('#ccMove2').combobox('reload', url);
+            }">
+    </div>
+    <div style="margin-bottom:5px">
+      <input id="ccMove2" name="warehouseSector" class="easyui-combobox" style="width:250px;" editable="false" label="Sektor:" data-options="
+            valueField: 'id',
+            textField: 'name',
+            method: 'get'
+            "/>
+    </div>
+    <input type="hidden" name="id"/>
+  </form>
+</div>
+<div id="dlg-buttonsMove">
+  <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="moveItem()" style="width:90px">OK</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlgMove').dialog('close')" style="width:90px">Anuluj</a>
+</div>
 
 <script>
+  var chosenOrderID;
 
+  function openMoveDialog(){
+    var row = $('#dg').datagrid('getSelected');
+    if (row){
+      $('#dlgMove').dialog('open').dialog('setTitle','Przenieś towar');
+      $('#fmMove').form('load',row);
+    }
+  }
+  function moveItem(){
+    alert("OK")
+    $('#fmMove').form('submit',{
+      url: '/api/ware/move',
+      success: function(data){
+        if (data.serverError){
+          $.messager.show({
+            title: 'Błąd',
+            msg: data.serverError
+          });
+        } else {
+          $('#dlgMove').dialog('close');        // close the dialog
+          $('#dg').datagrid('reload');    // reload the user data
+        }
+      },
+      fail: function(data){
+        $.messager.show({    // show error message
+          title: 'Błąd',
+          msg: data.responseText
+        });
+      },
+    });
+  }
+  function saveOrder(){
+    $('#fm2').form('submit',{
+      url: url,
+      success: function(data){
+        if (data.serverError){
+          $.messager.show({
+            title: 'Błąd',
+            msg: data.serverError
+          });
+        } else {
+          $('#dlg3').dialog('close');        // close the dialog
+          $('#dg3').datagrid('reload');    // reload the user data
+        }
+        $('#fakeField').remove();
+      }
+    });
+  }
+  function addWareToOrderDialog(){
+    var row = $('#dg').datagrid('getSelected');
+    if (row){
+      $('#dlg4').dialog('open').dialog('setTitle','Dodaj do zamówienia');
+      $('#fm4').form('load',row);
+      url = '';//TODO
+    }
+  }
+  function addWareToOrder(){
+    //TODO
+  }
+  function removeWareFromOrder(){
+    //TODO
+  }
+  function removeOrder(){
+    var row = $('#dg3').datagrid('getSelected');
+    if(row) {
+      url = '/api/order/delete'
+      $.messager.confirm('Potwierdź','Czy na pewno chcesz usunąć wybrane zamówienie?',function(r){
+        if (r){
+          $.get(url,{id:row.id})
+            .done(function(data) {
+              if (data.serverError){
+                $.messager.show({    // show error message
+                  title: 'Błąd',
+                  msg: data.serverError
+                });
+              } else {
+                $('#dg3').datagrid('reload');    // reload the ware data
+              }
+            })
+        }
+      });
+    }
+  }
+  function newOrderDialog(){
+    $('#fm2').form('clear');
+    $('#hidableOrder').css("display","none");
+    $('#cc5').combobox('select',"otwarte");
+    $('#dlg3').dialog('open').dialog('setTitle','Nowe zamówienie');
+    url='/api/order/add';
+  }
+  function editOrderDialog(){
+    var row = $('#dg3').datagrid('getSelected');
+    if(row) {
+      $('#hidableOrder').css("display", "block");
+      $('#dlg3').dialog('open').dialog('setTitle', 'Nowe zamówienie');
+      $('#fm2').form('load',row);
+      url='/api/order/edit';
+    }
+  }
+  function openOrderDialog(){
+    var url = '/api/order/get';
+    $('#dg3').datagrid('reload', url);
+    $('#dlg2').dialog('open').dialog('setTitle','Zamówienia');
+  }
+  function chooseOrder(){
+    var row = $('#dg3').datagrid('getSelected');
+    if(row){
+      //wybór ordera
+      chosenOrderID = row.id;
+      $('#chosenOrder').val("id: "+row.id+" | "+row.user);
+      var url = "/api/ware/getByOrder?orderId="+chosenOrderID;
+      $('#dg2').datagrid('reload',url);
+      $('#dlg2').dialog('close');
+    }
+  }
   function doSearch(){
     $('#dg').datagrid('load',{
       name: $('#itemName').val(),
@@ -104,11 +361,16 @@
     });
   }
   function addWareDialog(){
-    $('#dlg').dialog('open').dialog('setTitle','Nowy towar');
     $('#fm').form('clear');
+    $('#hidableSector').css("display","block");
+    $('#cc4').combobox('select', "dostepne");
+    $('#hidableWare').css("display","none");
+    $('#dlg').dialog('open').dialog('setTitle','Nowy towar');
     url = '/api/ware/add';
   }
   function editWareDialog(){
+    $('#hidableSector').css("display","none");
+    $('#hidableWare').css("display","block");
     var row = $('#dg').datagrid('getSelected');
     if (row){
       $('#dlg').dialog('open').dialog('setTitle','Edytuj towar');
@@ -137,7 +399,13 @@
           $('#dg').datagrid('reload');    // reload the user data
         }
         $('#fakeField').remove();
-      }
+      },
+      fail: function(data){
+        $.messager.show({    // show error message
+          title: 'Błąd',
+          msg: data.responseText
+        });
+      },
     });//*/
   }
   function deleteWare(){

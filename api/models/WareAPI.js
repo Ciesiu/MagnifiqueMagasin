@@ -17,9 +17,6 @@ module.exports = {
     status:{
       type: 'string'
     },
-    type:{
-      type: 'string'
-    },
     warehouseSector:{
       model: 'warehouseSectorAPI'
     },

@@ -13,9 +13,9 @@
 <div id="navBar">
   <%- partial('./navbar.ejs') %>
 </div>
-<div id="viewRow">
-  <div id="warehouseColumn" style="width:50%;float:left">
-    <table id="dg1" title="Magazyny" class="easyui-datagrid" style="width:550px;height:250px"
+<div id="dataRow">
+  <div id="leftColumn" style="width:50%;float:left">
+    <table id="dg1" title="Magazyny" class="easyui-datagrid" style="width:100%;min-height:414px"
            method="GET"
            url="/api/warehouse/getAll"
            toolbar="#toolbar1"
@@ -34,8 +34,8 @@
       <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="removeWarehouse()">Usuń magazyn</a>
     </div>
   </div>
-  <div id="sectorColumn" style="margin-left:50%">
-    <table id="dg2" title="Sektory" class="easyui-datagrid" style="width:550px;height:250px"
+  <div id="rightColumn" style="width:50%;float:left">
+    <table id="dg2" title="Sektory" class="easyui-datagrid" style="width:100%;min-height:414px"
            method="GET"
            url=""
            toolbar="#toolbar2"
@@ -57,7 +57,7 @@
 
 <!--Okienka dialogowe-->
 <div id="dlg1" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
-     closed="true" buttons="#dlg-buttons1">
+     closed="true" modal="true" buttons="#dlg-buttons1">
   <form id="fm1" method="get" novalidate>
     <div style="margin-bottom:5px;margin-top:10px">
       <input name="name" label="Nazwa:" style="width:100%" class="easyui-textbox" required="true">
@@ -74,7 +74,7 @@
 </div>
 
 <div id="dlg2" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
-     closed="true" buttons="#dlg-buttons2">
+     closed="true" modal="true" buttons="#dlg-buttons2">
   <form id="fm2" method="get" novalidate>
     <div style="margin-bottom:5px;margin-top:10px">
       <input name="name" label="Nazwa:" style="width:100%" class="easyui-textbox" required="true">

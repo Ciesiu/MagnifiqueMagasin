@@ -46,14 +46,20 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  'get /api/ware/split': 'WareAPIController.splitWare',
   'get /api/ware/add': 'WareAPIController.createNewWare',
   'get /api/ware/move': 'WareAPIController.moveWare',
-  'get /api/ware/getSecWares': 'WareAPIController.getSectorWares',
-  'get /api/ware/getWHWares': 'WareAPIController.getWarehouseWares',
+  'get /api/ware/getByWarehouse': 'WareAPIController.getWaresByWarehouse',
   'get /api/ware/edit': 'WareAPIController.editWare',
   'get /api/ware/delete': 'WareAPIController.removeWare',
+  'get /api/ware/getByOrder': 'WareAPIController.getWaresByOrder',
+  'get /api/ware/addOrder': 'WareAPIController.addWareToOrder',
+  'get /api/ware/removeOrder': 'WareAPIController.removeWareFromOrder',
 
+
+  'get /api/order/get': 'OrderAPIController.getOrders',
+  'get /api/order/add': 'OrderAPIController.newOrder',
+  'get /api/order/edit': 'OrderAPIController.editOrder',
+  'get /api/order/delete': 'OrderAPIController.removeOrder',
 
 
   'get /api/warehouse/add': 'WarehouseAPIController.addWarehouse',

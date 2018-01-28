@@ -11,22 +11,25 @@
 
 </head>
 <body>
-
-<div class="easyui-panel" title="Logowanie" style="width:300px;padding:10px;">
-    <table>
-      <tr>
-        <td>Login:</td>
-        <td><input id="login" name="login" class="f1 easyui-textbox"></input></td>
-      </tr>
-      <tr>
-        <td>Hasło:</td>
-        <td><input type="password" id="password" name="pass" class="f1 easyui-textbox"></input></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td><input type="button" value=" Zaloguj " onclick="auth()" class="f1 easyui-linkbutton"></td>
-      </tr>
-    </table>
+<div id="content">
+  <div id="loginScreen" style="margin:auto;margin-top:10%;width:300px">
+    <div class="easyui-panel" title="Logowanie" style="padding:10px">
+        <table>
+          <tr>
+            <td>Login:</td>
+            <td><input id="login" name="login" class="f1 easyui-textbox"></input></td>
+          </tr>
+          <tr>
+            <td>Hasło:</td>
+            <td><input type="password" id="password" name="pass" class="f1 easyui-textbox"></input></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><input type="button" value=" Zaloguj " onclick="auth()" class="f1 easyui-linkbutton"></td>
+          </tr>
+        </table>
+    </div>
+  </div>
 </div>
 <script>
 
