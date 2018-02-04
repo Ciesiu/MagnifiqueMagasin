@@ -22,8 +22,8 @@ a [Sails](http://sailsjs.org) application
 - [x] zmiana własnego hasła
 
 
-- [ ] brakujące paginacje
-- [ ] layout zarządzania userami
+- [x] brakujące paginacje
+- [x] layout zarządzania userami
 - [ ] raporty
 - [ ] zarządzanie dostawami
 - [ ] ograniczenia przy zarządzaniu towarami/zamówieniami (statusy)
