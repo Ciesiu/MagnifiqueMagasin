@@ -26,6 +26,6 @@ a [Sails](http://sailsjs.org) application
 - [x] layout zarządzania userami
 - [ ] raporty
 - [ ] zarządzanie dostawami
-- [ ] ograniczenia przy zarządzaniu towarami/zamówieniami (statusy)
+- [x] ograniczenia przy zarządzaniu towarami/zamówieniami (statusy)
 - [ ] loading screeny
 - [ ] filtrowanie orderów po statusie
