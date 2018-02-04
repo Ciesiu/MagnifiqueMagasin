@@ -28,3 +28,4 @@ a [Sails](http://sailsjs.org) application
 - [ ] zarządzanie dostawami
 - [ ] ograniczenia przy zarządzaniu towarami/zamówieniami (statusy)
 - [ ] loading screeny
+- [ ] filtrowanie orderów po statusie
