@@ -27,5 +27,5 @@ a [Sails](http://sailsjs.org) application
 - [ ] raporty
 - [ ] zarządzanie dostawami
 - [x] ograniczenia przy zarządzaniu towarami/zamówieniami (statusy)
-- [ ] loading screeny
+- [ ] loading screeny - skopiować do pozostałych widoków
 - [ ] filtrowanie orderów po statusie
