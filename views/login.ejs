@@ -33,12 +33,16 @@
 </div>
 <script>
 
+  $('document').ready(function(){
+    if(sessionStorage.getItem('id')){
+      window.location.replace('/manageWares');
+    }
+  })
 
   function auth(){
     var login = $("#login").val();
     var pass = $("#password").val();
     pass = CryptoJS.MD5(pass).toString();
-    alert(pass);
 
     var address = 'http://localhost:1337/api/user/check';
 
@@ -52,7 +56,7 @@
           sessionStorage.setItem('lastName',data.found.lastName);
           sessionStorage.setItem('id',data.found.id);
 
-          window.location.replace('/manageUsers');
+          window.location.replace('/manageWares');
         }
       })
 

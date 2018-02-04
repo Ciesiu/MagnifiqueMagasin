@@ -1,6 +1,11 @@
 <html>
 <head>
 
+  <script>
+    if(!sessionStorage.getItem('id')){
+      window.location.replace('/login');
+    }
+  </script>
 </head>
 <body>
   <div id="navBar">
@@ -8,7 +13,13 @@
   </div>
 
 <script>
-
+  $('document').ready(function(){
+      $('#wareButton').removeClass("selected");
+      $('#sectorButton').removeClass("selected");
+      $('#orderButton').addClass("selected");
+      $('#reportButton').removeClass("selected");
+      $('#userButton').removeClass("selected");
+  })
 </script>
 </body>
 </html>

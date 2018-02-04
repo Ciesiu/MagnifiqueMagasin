@@ -7,11 +7,18 @@
 
 module.exports = {
   getOrders: function(req,res){
-    OrderAPI.find({}).exec(function(err,found){
+    var page = req.param("page");
+    var rows = req.param("rows");
+    OrderAPI.count({}).exec(function(err,count){
       if(err){
         return res.serverError(err);
       }
-      return res.json(found);
+      OrderAPI.find({}).paginate({page:page,limit:rows}).exec(function(err,found){
+        if(err){
+          return res.serverError(err);
+        }
+        return res.json({rows:found,total:count});
+      })
     })
   },
   newOrder: function(req,res){
@@ -19,7 +26,7 @@ module.exports = {
 
     var orderData = {};
     orderData['user'] = personName;
-    orderData['status'] = 'preparing';
+    orderData['status'] = 'otwarte';
     OrderAPI.create(orderData).exec(function(err,order){
       if(err){
         return res.serverError(err);
@@ -36,11 +43,28 @@ module.exports = {
     if(newStatus) orderData['status'] = newStatus;
     if(newUser) orderData['user'] = newUser;
 
-    OrderAPI.update({id: orderId},orderData).exec(function(err){
+    OrderAPI.findOne({id:orderId}).exec(function(err,found){
       if(err){
-        res.serverError(err);
+        return res.serverError(err);
       }
-      res.ok();
+      var oldStatus = found.status
+      if(oldStatus=='zamkniete') return res.serverError("Nie można edytować zamkniętego zamówienia");
+      OrderAPI.update({id: orderId},orderData).exec(function(err){
+        if(err){
+          res.serverError(err);
+        }
+        if(newStatus){
+          if(oldStatus != newStatus && newStatus == 'zamkniete'){
+            WareAPI.update({order:orderId},{status:'niedostepne'}).exec(function(err){
+              if(err){
+                res.serverError(err);
+              }
+              return res.ok();
+            })
+          }
+        }
+        res.ok();
+      })
     })
   },
   removeOrder: function(req,res){

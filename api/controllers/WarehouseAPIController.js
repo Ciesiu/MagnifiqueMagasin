@@ -7,11 +7,19 @@
 
 module.exports = {
   getAllWarehouses: function(req,res){
-    WarehouseAPI.find({}).exec(function(err,found){
+    var page = req.param("page");
+    var rows = req.param("rows");
+
+    WarehouseAPI.count({}).exec(function(err,count){
       if(err){
         return res.serverError(err);
       }
-      return res.json(found);
+      WarehouseAPI.find({}).paginate({page:page,limit:rows}).exec(function(err,found){
+        if(err){
+          return res.serverError(err);
+        }
+        return res.json({rows:found,total:count});
+      })
     })
   },
   getAllWarehousesCombo: function(req,res){

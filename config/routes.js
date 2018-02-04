@@ -33,7 +33,7 @@ module.exports.routes = {
   ***************************************************************************/
 
   '/': {
-    view: 'homepage'
+    view: 'login'
   },
 
   /***************************************************************************
@@ -71,6 +71,7 @@ module.exports.routes = {
 
   'get /api/sector/add': 'WarehouseSectorAPIController.addSector',
   'get /api/sector/getWHSectors': 'WarehouseSectorAPIController.getWHSectors',
+  'get /api/sector/getWHSectorsNoPag': 'WarehouseSectorAPIController.getWHSectorsNoPagination',
   'get /api/sector/getWHSectorsCombo': 'WarehouseSectorAPIController.getWHSectorsCombo',
   'get /api/sector/edit': 'WarehouseSectorAPIController.editSector',
   'get /api/sector/delete': 'WarehouseSectorAPIController.removeSector',

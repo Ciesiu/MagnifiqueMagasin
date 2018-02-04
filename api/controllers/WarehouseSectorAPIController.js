@@ -8,12 +8,29 @@
 module.exports = {
   getWHSectors: function(req,res){
     var whId = req.param("whId");
-    WarehouseAPI.findOne({id:whId}).populate('sectors').exec(function(err,found){
+    var page = req.param("page");
+    var rows = req.param("rows");
+
+    WarehouseSectorAPI.count({}).exec(function(err,count){
       if(err){
         return res.serverError(err);
       }
-      if(!found) return res.json({});
-      return res.json(found.sectors);
+      WarehouseSectorAPI.find({warehouse:whId}).paginate({page:page,limit:rows}).exec(function(err,found){
+        if(err){
+          return res.serverError(err);
+        }
+        return res.json({rows:found,total:count});
+      })
+    })
+  },
+  getWHSectorsNoPagination: function(req,res){
+    var whId = req.param("whId");
+
+    WarehouseSectorAPI.find({warehouse:whId}).exec(function(err,found){
+      if(err){
+        return res.serverError(err);
+      }
+      return res.json(found);
     })
   },
   getWHSectorsCombo: function(req,res){

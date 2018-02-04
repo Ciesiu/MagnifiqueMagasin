@@ -11,32 +11,42 @@
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/core-min.js"></script>
   <script type="text/javascript" src=" https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/md5.js"></script>
 
+  <script>
+    if(!sessionStorage.getItem('id')){
+      window.location.replace('/login');
+    }else {
+      if (sessionStorage.getItem('role') != 'admin') {
+        window.location.replace('/manageWares');
+      }
+    }
+  </script>
 </head>
 <body>
 <div id="navBar">
   <%- partial('./navbar.ejs') %>
 </div>
-<table id="dg" title="Użytkownicy" class="easyui-datagrid" style="width:550px;height:250px"
-       method="GET"
-       url="/api/user/getAll"
-       toolbar="#toolbar"
-       rownumbers="true" fitColumns="true" singleSelect="true">
-  <thead>
-  <tr>
-    <th field="id" width="50">ID</th>
-    <th field="firstName" width="50">Imię</th>
-    <th field="lastName" width="50">Nazwisko</th>
-    <th field="userName" width="50">Login</th>
-    <th field="role" width="50">Rola</th>
-  </tr>
-  </thead>
-</table>
-<div id="toolbar">
-  <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUserDialog()">Dodaj użytkownika</a>
-  <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUserDialog()">Edytuj użytkownika</a>
-  <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteUser()">Usuń użytkownika</a>
+<div id="data">
+  <table id="dg" title="Użytkownicy" class="easyui-datagrid" style="width:100%;min-height:414px"
+         method="GET"
+         url="/api/user/getAll"
+         toolbar="#toolbar"
+         rownumbers="true" fitColumns="true" singleSelect="true" pagination="true">
+    <thead>
+    <tr>
+      <th field="id" width="10">ID</th>
+      <th field="firstName" width="50">Imię</th>
+      <th field="lastName" width="50">Nazwisko</th>
+      <th field="userName" width="30">Login</th>
+      <th field="role" width="30">Rola</th>
+    </tr>
+    </thead>
+  </table>
+  <div id="toolbar">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUserDialog()">Dodaj użytkownika</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUserDialog()">Edytuj użytkownika</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteUser()">Usuń użytkownika</a>
+  </div>
 </div>
-
 <div id="dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
      closed="true" modal="true" buttons="#dlg-buttons">
   <form id="fm" name="fm" method="get" novalidate>
@@ -68,7 +78,13 @@
 
 <script>
 
-
+  $('document').ready(function(){
+      $('#wareButton').removeClass("selected");
+      $('#sectorButton').removeClass("selected");
+      $('#orderButton').removeClass("selected");
+      $('#reportButton').removeClass("selected");
+      $('#userButton').addClass("selected");
+  })
 
   function newUserDialog(){
     $('#dlg').dialog('open').dialog('setTitle','Nowy użytkownik');

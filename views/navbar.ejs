@@ -6,15 +6,15 @@
     font-weight:bold;
   }
   .selected{
-    border-width: 2px;
     border-color: gold;
   }
 </style>
 <div>
-  <input type="button" class="easyui-linkbutton menu-button selected" value="Magazyny i sektory">
-  <input type="button" class="easyui-linkbutton menu-button" value="Użytkownicy">
-  <input type="button" class="easyui-linkbutton menu-button" value="Towary i zamówienia">
-  <input type="button" class="easyui-linkbutton menu-button" value="Raporty">
+  <a id="wareButton" href="/manageWares" class="easyui-linkbutton menu-button">Towary i zamówienia</a>
+  <a id="sectorButton" href="/manageSectors" class="easyui-linkbutton menu-button">Magazyny i sektory</a>
+  <a id="orderButton" href="/manageOrders" class="easyui-linkbutton menu-button">Dostawy</a>
+  <a id="reportButton" href="manageReports" class="easyui-linkbutton menu-button">Raporty</a>
+  <a id="userButton" href="/manageUsers" class="easyui-linkbutton menu-button">Użytkownicy</a>
 </div>
 <div>
   <h3 style="display:inline-block">Zalogowano jako: <span id="firstLastName"></span></h3>
@@ -44,6 +44,12 @@
 <script>
   $(document).ready(function(){
     $('#firstLastName').html(sessionStorage.getItem("firstName")+" "+sessionStorage.getItem("lastName"));
+
+    if(sessionStorage.getItem("role")!='admin'){
+      $('#userButton').css('display','none');
+    }else{
+      $('#userButton').css('display','inline-block');
+    }
   })
   function logout(){
     sessionStorage.removeItem('login');

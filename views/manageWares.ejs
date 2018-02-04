@@ -8,8 +8,40 @@
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
   <script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
 
+  <style>
+    /* Paste this css to your style sheet file or under head tag */
+    /* This only works with JavaScript,
+    if it's not present, don't show loader */
+    .no-js #loader { display: none;  }
+    .js #loader { display: block; position: absolute; left: 100px; top: 0; }
+    .se-pre-con {
+      position: fixed;
+      left: 0px;
+      top: 0px;
+      width: 100%;
+      height: 100%;
+      z-index: 9999;
+      background: url("/images/loading.gif") center no-repeat #fff;
+    }
+  </style>
+
+  <script>
+    // $.messager.progress({
+    //   title:'Proszę czekać',
+    //   msg:'Wczytywanie...'
+    // });
+    $(window).load(function() {
+      // Animate loader off screen
+      $(".se-pre-con").fadeOut("slow");;
+    });
+    if(!sessionStorage.getItem('id')){
+      window.location.replace('/login');
+    }
+  </script>
 </head>
 <body>
+<div class="se-pre-con"></div>
+
 <div id="navBar">
   <%- partial('./navbar.ejs') %>
 </div>
@@ -42,7 +74,7 @@
           onSelect: function(rec){
               var url = 'http://localhost:1337/api/ware/getByWarehouse?whId='+rec.id;
               var url2 = 'http://localhost:1337/api/sector/getWHSectorsCombo?whId='+rec.id;
-              var url3 = 'http://localhost:1337/api/sector/getWHSectors?whId='+rec.id;
+              var url3 = 'http://localhost:1337/api/sector/getWHSectorsNoPag?whId='+rec.id;
               $('#dg').datagrid('reload', url);
               $('#cc2').combobox('reload', url2);
               $('#cc3').combobox('reload', url3);
@@ -95,8 +127,7 @@
     </table>
     <div id="toolbar2">
       Wybrane zamówienie: <input id="chosenOrder" disabled="true" value="brak">
-      <a href="#" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="openOrderDialog()">Zmień</a></br>
-
+      <a href="#" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="openOrderDialog()">Zarządzaj zamówieniami</a></br>
     </div>
   </div>
 </div>
@@ -240,6 +271,16 @@
 <script>
   var chosenOrderID;
 
+  $('document').ready(function(){
+      $('#wareButton').addClass("selected");
+      $('#sectorButton').removeClass("selected");
+      $('#orderButton').removeClass("selected");
+      $('#reportButton').removeClass("selected");
+      $('#userButton').removeClass("selected");
+
+    //$.messager.progress('close');
+  })
+
   function openMoveDialog(){
     var row = $('#dg').datagrid('getSelected');
     if (row){
@@ -271,6 +312,20 @@
     });
   }
   function saveOrder(){
+    var formData = $('#fm2').serialize();
+    $.get(url,formData)
+      .done(function(data){
+        $('#dlg3').dialog('close');        // close the dialog
+        $('#dg3').datagrid('reload');
+      })
+      .fail(function(data){
+        $.messager.show({
+          title: 'Błąd',
+          msg: data.responseText
+        });
+      })
+
+/*
     $('#fm2').form('submit',{
       url: url,
       success: function(data){
@@ -285,21 +340,50 @@
         }
         $('#fakeField').remove();
       }
-    });
+    });*/
   }
   function addWareToOrderDialog(){
     var row = $('#dg').datagrid('getSelected');
     if (row){
       $('#dlg4').dialog('open').dialog('setTitle','Dodaj do zamówienia');
       $('#fm4').form('load',row);
-      url = '';//TODO
+      url = '/api/ware/addOrder';
     }
   }
   function addWareToOrder(){
-    //TODO
+    var data = {};
+    data['quantity'] = $('#fm4').find('input[name="quantity"]').val();
+    data['orderId'] = chosenOrderID;
+    data['id'] = $('#dg').datagrid('getSelected').id;
+    $.get(url,data)
+      .done(function(){
+        $('#dlg4').dialog('close');
+        $('#dg').datagrid('reload');
+        $('#dg2').datagrid('reload');
+      })
+      .fail(function(data){
+        $.messager.show({    // show error message
+          title: 'Błąd',
+          msg: data.responseText
+        })
+      })
   }
   function removeWareFromOrder(){
-    //TODO
+    var row = $('#dg2').datagrid('getSelected');
+    if(row){
+      var id = row.id;
+      $.get('/api/ware/removeOrder',{id:id})
+        .done(function(){
+          $('#dg').datagrid('reload');
+          $('#dg2').datagrid('reload');
+        })
+        .fail(function(data){
+          $.messager.show({    // show error message
+            title: 'Błąd',
+            msg: data.responseText
+          })
+        })
+    }
   }
   function removeOrder(){
     var row = $('#dg3').datagrid('getSelected');
@@ -318,6 +402,12 @@
                 $('#dg3').datagrid('reload');    // reload the ware data
               }
             })
+            .fail(function(data){
+              $.messager.show({    // show error message
+                title: 'Błąd',
+                msg: data.responseText
+              });
+          })
         }
       });
     }
@@ -385,26 +475,35 @@
       .attr("name", "sectorId").val(sectorId)
       .attr("id","fakeField");
     $('#fm').append($(input));*/
+    var formData = $('#fm').serialize();
+    $.get(url,formData)
+      .done(function(data){
+        $('#dlg').dialog('close');        // close the dialog
+        $('#dg').datagrid('reload');
+      })
+      .fail(function(data){
+        $.messager.show({
+          title: 'Błąd',
+          msg: data.responseText
+        });
+      })
 
-    $('#fm').form('submit',{
+   /* $('#fm').form('submit',{
       url: url,
       success: function(data){
-        if (data.serverError){
+        alert(data)
+        var datajson = JSON.parse(data);
+        alert(datajson.serverError)
+        if (datajson.serverError){
           $.messager.show({
             title: 'Błąd',
-            msg: data.serverError
+            msg: datajson.serverError
           });
         } else {
           $('#dlg').dialog('close');        // close the dialog
           $('#dg').datagrid('reload');    // reload the user data
         }
         $('#fakeField').remove();
-      },
-      fail: function(data){
-        $.messager.show({    // show error message
-          title: 'Błąd',
-          msg: data.responseText
-        });
       },
     });//*/
   }

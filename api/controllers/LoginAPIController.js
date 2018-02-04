@@ -139,11 +139,18 @@ module.exports = {
   },
 
   getAllUsers: function(req,res){
-    LoginAPI.find({}).exec(function(err,found){
+    var page = req.param("page");
+    var rows = req.param("rows");
+    LoginAPI.count({}).exec(function(err,count){
       if(err){
         return res.serverError(err);
       }
-      return res.json(found);
+      LoginAPI.find({}).paginate({page:page,limit:rows}).exec(function(err,found){
+        if(err){
+          return res.serverError(err);
+        }
+        return res.json({rows:found,total:count});
+      })
     })
   },
 
