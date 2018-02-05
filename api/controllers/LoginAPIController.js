@@ -141,11 +141,16 @@ module.exports = {
   getAllUsers: function(req,res){
     var page = req.param("page");
     var rows = req.param("rows");
+    var sort = req.param("sort");
+    var order = req.param("order");
+    var sortString;
+    if(sort&&order) sortString = sort+" "+order;
+    else sortString = "id asc";
     LoginAPI.count({}).exec(function(err,count){
       if(err){
         return res.serverError(err);
       }
-      LoginAPI.find({}).paginate({page:page,limit:rows}).exec(function(err,found){
+      LoginAPI.find({}).sort(sortString).paginate({page:page,limit:rows}).exec(function(err,found){
         if(err){
           return res.serverError(err);
         }

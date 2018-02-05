@@ -61,11 +61,15 @@ module.exports = {
     var page = req.param("page");
     var rows = req.param("rows");
     var orderId = req.param("orderId");
+    var sort = req.param("sort");
+    var order = req.param("order");
+    var sortString;
+    if(sort&&order) sortString = sort+" "+order;
     WareAPI.count({order:orderId}).exec(function(err,count){
       if(err){
         return res.serverError(err);
       }
-      WareAPI.find({order:orderId}).populate('warehouseSector').paginate({page:page,limit:rows}).exec(function(err,found){
+      WareAPI.find({order:orderId}).populate('warehouseSector').sort(sortString).paginate({page:page,limit:rows}).exec(function(err,found){
         if(err){
           return res.serverError(err);
         }
@@ -83,6 +87,11 @@ module.exports = {
     var sectorId = req.param("sectorId");
     var page = req.param("page");
     var rows = req.param("rows");
+    var sort = req.param("sort");
+    var order = req.param("order");
+    var sortString;
+    if(sort&&order) sortString = sort+" "+order;
+    else sortString = "id asc";
     WarehouseAPI.findOne({id:whId}).populate('sectors').exec(function(err,found){
       if(err){
         return res.serverError(err);
@@ -101,7 +110,7 @@ module.exports = {
         if(err){
           return res.serverError(err);
         }
-        WareAPI.find(params).populate('warehouseSector').paginate({page:page,limit:rows}).exec(function(err,found){
+        WareAPI.find(params).populate('warehouseSector').sort(sortString).paginate({page:page,limit:rows}).exec(function(err,found){
           if(err){
             return res.serverError(err);
           }

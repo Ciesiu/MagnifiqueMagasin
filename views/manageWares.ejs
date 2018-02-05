@@ -5,13 +5,10 @@
   <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/demo/demo.css">
   <link rel="stylesheet" type="text/css" href="https://www.jeasyui.com/easyui/themes/color.css">
 
-  <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.1.min.js"></script>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
   <script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
 
   <style>
-    /* Paste this css to your style sheet file or under head tag */
-    /* This only works with JavaScript,
-    if it's not present, don't show loader */
     .no-js #loader { display: none;  }
     .js #loader { display: block; position: absolute; left: 100px; top: 0; }
     .se-pre-con {
@@ -26,12 +23,7 @@
   </style>
 
   <script>
-    // $.messager.progress({
-    //   title:'Proszę czekać',
-    //   msg:'Wczytywanie...'
-    // });
     $(window).load(function() {
-      // Animate loader off screen
       $(".se-pre-con").fadeOut("slow");;
     });
     if(!sessionStorage.getItem('id')){
@@ -57,10 +49,10 @@
          pagination="true">
       <thead>
       <tr>
-        <th field="id" width="15">ID</th>
-        <th field="name" width="50">Nazwa</th>
-        <th field="quantity" width="25">Ilość</th>
-        <th field="status" width="25">Status</th>
+        <th field="id" width="15" sortable="true">ID</th>
+        <th field="name" width="50" sortable="true">Nazwa</th>
+        <th field="quantity" width="25" sortable="true">Ilość</th>
+        <th field="status" width="25" sortable="true">Status</th>
         <th field="sectorName" width="50">Sektor</th>
       </tr>
       </thead>
@@ -117,10 +109,10 @@
            pagination="true">
       <thead>
       <tr>
-        <th field="id" width="15">ID</th>
-        <th field="name" width="50">Nazwa</th>
-        <th field="quantity" width="25">Ilość</th>
-        <th field="status" width="25">Status</th>
+        <th field="id" width="15" sortable="true">ID</th>
+        <th field="name" width="50" sortable="true">Nazwa</th>
+        <th field="quantity" width="25" sortable="true">Ilość</th>
+        <th field="status" width="25" sortable="true">Status</th>
         <th field="sectorName" width="50">Sektor</th>
       </tr>
       </thead>
@@ -164,7 +156,7 @@
 </div>
 
 <!--dialog od zamówienia-->
-<div id="dlg2" class="easyui-dialog" style="width:50%;padding:10px 20px"
+<div id="dlg2" class="easyui-dialog" style="width:70%;padding:10px 20px"
      closed="true" modal="true" buttons="#dlg-buttons2">
     <!--datagrid-->
   <table id="dg3" title="Zamówienia" style="width:100%;min-height:414px"
@@ -177,9 +169,10 @@
          pagination="true">
     <thead>
     <tr>
-      <th field="id" width="10">ID</th>
-      <th field="status" width="20">Status</th>
-      <th field="user" width="50">Odbiorca</th>
+      <th field="id" width="10" sortable="true">ID</th>
+      <th field="status" width="20" sortable="true">Status</th>
+      <th field="user" width="50" sortable="true">Odbiorca</th>
+      <th field="createdAt" width="40" sortable="true">Utworzono</th>
     </tr>
     </thead>
   </table>

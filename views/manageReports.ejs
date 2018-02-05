@@ -32,18 +32,19 @@
   </script>
 </head>
 <body>
-  <div class="se-pre-con"></div>
-  <div id="navBar">
-    <%- partial('./navbar.ejs') %>
-  </div>
+<div class="se-pre-con"></div>
+
+<div id="navBar">
+  <%- partial('./navbar.ejs') %>
+</div>
 
 <script>
   $('document').ready(function(){
-      $('#wareButton').removeClass("selected");
-      $('#sectorButton').removeClass("selected");
-      $('#orderButton').addClass("selected");
-      $('#reportButton').removeClass("selected");
-      $('#userButton').removeClass("selected");
+    $('#wareButton').removeClass("selected");
+    $('#sectorButton').removeClass("selected");
+    $('#orderButton').removeClass("selected");
+    $('#reportButton').addClass("selected");
+    $('#userButton').removeClass("selected");
   })
 </script>
 </body>

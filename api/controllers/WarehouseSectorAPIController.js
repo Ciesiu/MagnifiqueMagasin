@@ -10,12 +10,17 @@ module.exports = {
     var whId = req.param("whId");
     var page = req.param("page");
     var rows = req.param("rows");
+    var sort = req.param("sort");
+    var order = req.param("order");
+    var sortString;
+    if(sort&&order) sortString = sort+" "+order;
+    else sortString = "id asc";
 
     WarehouseSectorAPI.count({}).exec(function(err,count){
       if(err){
         return res.serverError(err);
       }
-      WarehouseSectorAPI.find({warehouse:whId}).paginate({page:page,limit:rows}).exec(function(err,found){
+      WarehouseSectorAPI.find({warehouse:whId}).sort(sortString).paginate({page:page,limit:rows}).exec(function(err,found){
         if(err){
           return res.serverError(err);
         }
