@@ -177,6 +177,17 @@
     </thead>
   </table>
   <div id="toolbar3">
+    Status: <input id="ccOrderStatus" class="easyui-combobox" editable="false" data-options="
+          valueField: 'id',
+          textField: 'name',
+          method: 'get',
+          url: 'http://localhost:1337/js/dependencies/statusData.json',
+          onSelect: function(rec){
+            $('#dg3').datagrid('load',{
+                status: rec.id
+            });
+          }"/><br/>
+
     <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newOrderDialog()">Nowe zamówienie</a>
     <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editOrderDialog()">Edytuj zamówienie</a>
     <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="removeOrder()">Usuń zamówienie</a>
@@ -264,6 +275,7 @@
 <script>
   var chosenOrderID;
 
+
   $('document').ready(function(){
       $('#wareButton').addClass("selected");
       $('#sectorButton').removeClass("selected");
@@ -271,8 +283,25 @@
       $('#reportButton').removeClass("selected");
       $('#userButton').removeClass("selected");
 
+
+    $('#ccOrderStatus').combobox({
+      url:'/js/dependencies/statusData.json',
+      method:'GET',
+      valueField:'id',
+      textField:'text',
+      editable:'false',
+    });
     //$.messager.progress('close');
   })
+
+
+
+  function filterOrders(row){
+    alert("change")
+    var sel = row;
+    var url = "http://localhost:1337/api/order/get?status="+sel;
+    $('#dg3').datagrid('reload', url);
+  }
 
   function openMoveDialog(){
     var row = $('#dg').datagrid('getSelected');

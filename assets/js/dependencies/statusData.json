@@ -1,0 +1,14 @@
+[{
+  "id":"",
+  "text":"wszystkie statusy",
+  "selected":true
+},{
+  "id":"otwarte",
+  "text":"otwarte"
+},{
+  "id":"gotowe",
+  "text":"gotowe"
+},{
+  "id":"zamkniete",
+  "text":"zamkniete"
+}]

@@ -11,14 +11,17 @@ module.exports = {
     var rows = req.param("rows");
     var sort = req.param("sort");
     var order = req.param("order");
+    var status = req.param("status");
+    var search = {};
+    if(status) search["status"] = status;
     var sortString;
     if(sort&&order) sortString = sort+" "+order;
     else sortString = "id asc";
-    OrderAPI.count({}).exec(function(err,count){
+    OrderAPI.count(search).exec(function(err,count){
       if(err){
         return res.serverError(err);
       }
-      OrderAPI.find({}).sort(sortString).paginate({page:page,limit:rows}).exec(function(err,found){
+      OrderAPI.find(search).sort(sortString).paginate({page:page,limit:rows}).exec(function(err,found){
         if(err){
           return res.serverError(err);
         }
