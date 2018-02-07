@@ -29,4 +29,6 @@ a [Sails](http://sailsjs.org) application
 - [x] ograniczenia przy zarządzaniu towarami/zamówieniami (statusy)
 - [x] loading screeny - skopiować do pozostałych widoków
 - [x] filtrowanie orderów po statusie
-- [x] sortowanie tabsów
+- [x] sortowanie 
+
+- [ ] format daty
