@@ -32,3 +32,5 @@ a [Sails](http://sailsjs.org) application
 - [x] sortowanie 
 
 - [ ] format daty
+- [ ] nazwa
+- [ ] banner?
