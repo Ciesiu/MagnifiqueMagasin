@@ -48,6 +48,20 @@ module.exports = {
       return res.json(found.sectors);
     })
   },
+  getSectorsFullNamesCombo: function(req,res){
+    WarehouseSectorAPI.find({}).populate('warehouse').exec(function(err,found){
+      if(err){
+        return res.serverError(err);
+      }
+      if(found) {
+        found.forEach(function(item,index){
+          //console.log(item);
+          item['comboName'] = item.warehouse.name+": "+item.name;
+        })
+      }
+      return res.json(found);
+    })
+  },
   addSector: function(req,res){
     var warehouseId = req.param('warehouseId');
     var sectorName = req.param('name');

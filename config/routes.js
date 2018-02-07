@@ -54,6 +54,7 @@ module.exports.routes = {
   'get /api/ware/getByOrder': 'WareAPIController.getWaresByOrder',
   'get /api/ware/addOrder': 'WareAPIController.addWareToOrder',
   'get /api/ware/removeOrder': 'WareAPIController.removeWareFromOrder',
+  'get /api/ware/unloadDelivery': 'WareAPIController.unloadDelivery',
 
 
   'get /api/order/get': 'OrderAPIController.getOrders',
@@ -75,6 +76,7 @@ module.exports.routes = {
   'get /api/sector/getWHSectorsCombo': 'WarehouseSectorAPIController.getWHSectorsCombo',
   'get /api/sector/edit': 'WarehouseSectorAPIController.editSector',
   'get /api/sector/delete': 'WarehouseSectorAPIController.removeSector',
+  'get /api/sector/getFullNames': 'WarehouseSectorAPIController.getSectorsFullNamesCombo',
 
   'get /api/user/check': 'LoginAPIController.checkUser',
   'get /api/user/add': 'LoginAPIController.addUser',
@@ -82,6 +84,11 @@ module.exports.routes = {
   'get /api/user/update': 'LoginAPIController.updateUser',
   'get /api/user/delete': 'LoginAPIController.removeUser',
   'get /api/user/changePasswd': 'LoginAPIController.changePasswd',
+
+  'get /api/delivery/get': 'SupplyDeliveryAPIController.getDeliveries',
+  'get /api/delivery/add': 'SupplyDeliveryAPIController.addDelivery',
+  'get /api/delivery/getWares': 'SupplyDeliveryAPIController.getDeliveryWares',
+  'get /api/delivery/delete': 'SupplyDeliveryAPIController.deleteDelivery',
 
   '/login':{
     view: 'login'
@@ -94,5 +101,11 @@ module.exports.routes = {
   },
   '/manageWares':{
     view: 'manageWares'
+  },
+  '/manageOrders':{
+    view: 'manageOrders'
+  },
+  '/manageReports':{
+    view: 'manageReports'
   }
 };

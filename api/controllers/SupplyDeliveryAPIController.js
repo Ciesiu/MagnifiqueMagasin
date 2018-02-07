@@ -6,14 +6,100 @@
  */
 
 module.exports = {
-	addSupplyDelivery: function(req,res){
-    var wares = req.param('waresObject');
+  /*addItemToDelivery: function(req,res){
+    var id = req.param('id');
+    var name = req.param('name');
+    var quantity = req.param('quantity');
+    var sectorId = req.param('sectorId');
 
-    SupplyDeliveryAPI.create({wares: wares}).exec(function(err,created){
+    var itemObject = {};
+    itemObject["name"] = name;
+    itemObject['quantity'] = quantity;
+    itemObject['warehouseSector'] = sectorId;
+
+    SupplyDeliveryAPI.findOne({id:id}).exec(function(err,found){
       if(err){
-        res.serverError(err);
+        return res.serverError(err);
       }
-      res.json({created: created.id});
+      if(found){
+        found.wares.push(itemObject);
+      }
+    })
+
+
+  },*/
+	getDeliveries: function(req,res){
+    var page = req.param("page");
+    var rows = req.param("rows");
+    var sort = req.param("sort");
+    var order = req.param("order");
+    var sortString;
+    if(sort&&order) sortString = sort+" "+order;
+    else sortString = "id asc";
+
+	  SupplyDeliveryAPI.count({}).exec(function(err,count){
+	    if(err){
+	      return res.serverError(err);
+      }
+      SupplyDeliveryAPI.find({}).sort(sortString).paginate({page:page,limit:rows}).exec(function(err,found){
+        if(err){
+          return res.serverError(err);
+        }
+        return res.json({rows: found, total:count});
+      })
+    })
+  },
+  getDeliveryWares: function(req,res){
+	  var id = req.param('id');
+
+	  SupplyDeliveryAPI.findOne({id:id}).exec(function(err,found){
+	    if(err){
+	      return res.serverError(err);
+      }
+      return res.json(found.wares);
+    })
+  },
+  addDelivery: function(req,res){
+    var waresObject = req.param('waresObject');
+    console.log(waresObject)
+    var war = {};
+    war['wares'] = waresObject;
+    console.log(war)
+
+	  SupplyDeliveryAPI.create(war).exec(function(err){
+	    if(err){
+	      return res.serverError(err);
+      }
+      return res.ok();
+    })
+  },
+  /*saveDelivery: function(req,res){
+	  var id = req.param('id');
+	  var waresObject = req.param('waresObject');
+
+	  SupplyDeliveryAPI.findOne({id:id}).exec(function(err,found){
+	    if(err){
+	      return res.serverError(err);
+      }
+      found.wares = waresObject;
+	    found.save(function(err){
+	      if(err){
+	        return res.serverError(err);
+        }
+        //ToDo
+        //pakowanie do bazy
+        return res.ok();
+      })
+    })
+  },*/
+  deleteDelivery: function(req,res){
+	  var id = req.param('id');
+
+	  SupplyDeliveryAPI.destroy({id:id}).exec(function(err){
+	    if(err){
+	      return res.serverError(err);
+      }
+      return res.ok();
     })
   }
 };

@@ -57,6 +57,20 @@ function consolidateWares(res){
 
 module.exports = {
 
+  unloadDelivery: function(req,res){
+    var delObj = req.param('waresObject');
+    delObj = JSON.parse(delObj);
+    delObj.forEach(function(item){
+      delete item.warehouseSectorName;
+    })
+    WareAPI.create(delObj).exec(function(err){
+      if(err){
+        return res.serverError(err);
+      }
+      return res.ok();
+    })
+  },
+
   getWaresByOrder: function(req,res){
     var page = req.param("page");
     var rows = req.param("rows");
