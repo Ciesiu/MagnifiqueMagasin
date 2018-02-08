@@ -7,13 +7,13 @@
 
 function consolidateWares(res){
   WareAPI.find({}).exec(function(err,found){
-    console.log("konsolidacja.find")
+    //console.log("konsolidacja.find")
     if(err) return res.serverError(err);
     var duplicates = [];
     var waresLength = found.length;
 
     found.forEach(function(item,index){ //przygotowanie tablicy duplikatów
-      console.log("konsolidacja.forEach")
+      //console.log("konsolidacja.forEach")
       var itemName = item.name;
       var itemStatus = item.status;
       var itemOrder = item.order;
@@ -32,7 +32,7 @@ function consolidateWares(res){
     //scalenie duplikatów
     var counter = duplicates.length;
     duplicates.forEach(function(item){ //sumowanie ilości, zerowanie jednej z pozycji
-      console.log("forEachDuplicate")
+      //console.log("forEachDuplicate")
       counter--;
       var from = item.from;
       var to = item.to;
@@ -59,15 +59,17 @@ module.exports = {
 
   unloadDelivery: function(req,res){
     var delObj = req.param('waresObject');
-    delObj = JSON.parse(delObj);
+    //console.log(delObj);
+    //delObj = JSON.parse(delObj);
     delObj.forEach(function(item){
       delete item.warehouseSectorName;
+      item['status'] = 'dostepne';
     })
     WareAPI.create(delObj).exec(function(err){
       if(err){
         return res.serverError(err);
       }
-      return res.ok();
+      consolidateWares(res);
     })
   },
 

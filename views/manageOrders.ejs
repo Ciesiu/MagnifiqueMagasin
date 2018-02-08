@@ -148,6 +148,13 @@
       $('#userButton').removeClass("selected");
   })
 
+  $('#dgSupplies').datagrid({
+    onSelect: function(index,row){
+      console.log(row.wares);
+      $('#dgSuppliesWares').datagrid('loadData', JSON.parse(row.wares));
+    }
+  });
+
   function addSupplyToDatabase(){
     var url = '/api/delivery/add';
     var url2 = '/api/ware/unloadDelivery';
@@ -157,6 +164,7 @@
         $.get(url2,{waresObject:suppliesTmp})
           .done(function(data){
             $('#dgSupplies').datagrid('reload');
+            $('#dgSuppliesWares').datagrid('reload');
             $('#dlgNewDelivery').dialog('close')
             //////////////////////////////////////
           })

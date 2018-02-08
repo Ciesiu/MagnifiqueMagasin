@@ -8,7 +8,7 @@
 module.exports = {
   attributes: {
     wares: {
-      type: 'object'
+      type: 'text'
     }
   }
 };

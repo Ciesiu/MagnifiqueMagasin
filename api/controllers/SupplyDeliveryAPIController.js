@@ -61,12 +61,8 @@ module.exports = {
   },
   addDelivery: function(req,res){
     var waresObject = req.param('waresObject');
-    console.log(waresObject)
-    var war = {};
-    war['wares'] = waresObject;
-    console.log(war)
 
-	  SupplyDeliveryAPI.create(war).exec(function(err){
+	  SupplyDeliveryAPI.create({wares:JSON.stringify(waresObject)}).exec(function(err){
 	    if(err){
 	      return res.serverError(err);
       }
@@ -88,6 +84,7 @@ module.exports = {
         }
         //ToDo
         //pakowanie do bazy
+
         return res.ok();
       })
     })
