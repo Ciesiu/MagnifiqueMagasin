@@ -1,0 +1,251 @@
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css">
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/demo/demo.css">
+  <link rel="stylesheet" type="text/css" href="https://www.jeasyui.com/easyui/themes/color.css">
+
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+  <script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
+
+  <style>
+    .no-js #loader { display: none;  }
+    .js #loader { display: block; position: absolute; left: 100px; top: 0; }
+    .se-pre-con {
+      position: fixed;
+      left: 0px;
+      top: 0px;
+      width: 100%;
+      height: 100%;
+      z-index: 9999;
+      background: url("/images/loading.gif") center no-repeat #fff;
+    }
+  </style>
+
+  <script>
+    $(window).load(function() {
+      $(".se-pre-con").fadeOut("slow");;
+    });
+    if(!sessionStorage.getItem('id')){
+      window.location.replace('/login');
+    }
+  </script>
+</head>
+<body>
+<div class="se-pre-con"></div>
+
+<div id="navBar">
+  <%- partial('./navbar.ejs') %>
+</div>
+<div id="data">
+  <div id="leftColumn" style="width:30%;float:left">
+    <!--datagrid-->
+    <table id="dgSupplies" title="Zapotrzebowania" style="width:100%;min-height:414px"
+           class="easyui-datagrid"
+           method="GET"
+           toolbar="#toolbarSupplies"
+           rownumbers="true"
+           fitColumns="true"
+           singleSelect="true"
+           pagination="true"
+           url="http://localhost:1337/api/requisition/get">
+      <thead>
+      <tr>
+        <th field="id" width="10" sortable="true">ID</th>
+        <th field="createdAt" width="20" sortable="true">Data</th>
+      </tr>
+      </thead>
+    </table>
+    <div id="toolbarSupplies">
+      <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newRequisition()">Zgłoś zapotrzebowanie</a>
+      <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="removeRequisition()">Usuń zapotrzebowanie</a>
+      <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="print()">Drukuj</a>
+    </div>
+  </div>
+  <div id="rightColumn" style="width:70%;float:left">
+    <table id="dgSuppliesWares" title="Towar" style="width:100%;min-height:414px"
+           class="easyui-datagrid"
+           method="GET"
+           rownumbers="true"
+           fitColumns="true"
+           singleSelect="true"
+    >
+      <thead>
+      <tr>
+        <th field="name" width="10">Nazwa</th>
+        <th field="quantity" width="20">Ilość</th>
+      </tr>
+      </thead>
+    </table>
+  </div>
+</div>
+
+
+<div id="dlgItem" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+     closed="true" modal="true" buttons="#dlgItem-buttons">
+  <form id="fmItem" name="fm" method="get" novalidate>
+    <div style="margin-bottom:5px;margin-top:10px">
+      <input name="name" label="Nazwa:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <div style="margin-bottom:5px">
+      <input name="quantity" label="Ilość:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+  </form>
+</div>
+<div id="dlgItem-buttons">
+  <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="addItem()" style="width:90px">Zapisz</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlgItem').dialog('close')" style="width:90px">Anuluj</a>
+</div>
+
+<div id="dlgNewDelivery" class="easyui-dialog" style="width:750px;height:500px;padding:10px 20px"
+     closed="true" modal="true" buttons="#dlgNewDelivery-buttons">
+  <!--DataGrid-->
+  <table id="dgSuppliesWaresInDialog" title="Towar" style="width:100%;min-height:414px"
+         class="easyui-datagrid"
+         method="GET"
+         toolbar="#toolbarSuppliesWaresInDialog"
+         rownumbers="true"
+         fitColumns="true"
+         singleSelect="true"
+  >
+    <thead>
+    <tr>
+      <th field="name" width="10">Nazwa</th>
+      <th field="quantity" width="20">Ilość</th>
+      <th field="warehouseSectorName" width="20">Sektor</th>
+    </tr>
+    </thead>
+  </table>
+  <div id="toolbarSuppliesWaresInDialog">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addItemDialog()">Dodaj towar</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editItemDialog()">Edytuj Towar</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="removeItem()">Usuń Towar</a>
+  </div>
+  <!--koniec DataGrida-->
+</div>
+<div id="dlgNewDelivery-buttons">
+  <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="addSupplyToDatabase()" style="width:90px">Zapisz</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlgNewDelivery').dialog('close')" style="width:90px">Anuluj</a>
+</div>
+
+
+<script>
+  var suppliesTmp = [];
+  var editFlag = false;
+  $('document').ready(function(){
+    $('#wareButton').removeClass("selected");
+    $('#sectorButton').removeClass("selected");
+    $('#orderButton').removeClass("selected");
+    $('#reportButton').removeClass("selected");
+    $('#requisitionButton').addClass("selected");
+    $('#userButton').removeClass("selected");
+  })
+
+  $('#dgSupplies').datagrid({
+    onSelect: function(index,row){
+      console.log(row.wares);
+      $('#dgSuppliesWares').datagrid('loadData', JSON.parse(row.wares));
+    }
+  });
+
+  function print(){
+    var row = $('#dgSupplies').datagrid('getSelected');
+    if(row){
+      var header = "<html><head>" +
+        "<style>" +
+        "table th td { border: 1px solid black }" +
+        "table { border-collapse: collapse }" +
+        "</style>" +
+        "</head><body>";
+      var prelude = "<h3>Raport zapotrzebowania o ID:"+ row.id +"</h3><br/><br/>"
+      var beginning = "<table><tr><th>L.p.</th><th>Nazwa</th><th>Ilość</th></tr>"
+      var ending = "</table class='report'><br/><br/>Wygenerowano: "+row.createdAt;
+      var middle = "";
+      var footer = "</body></html>";
+      JSON.parse(row.wares).forEach(function(item,index){
+        middle += "<tr><td>"+ (+index + 1) +"</td><td>"+ item.name +"</td><td>"+ item.quantity +"</td></tr>"
+      })
+      var toPrint = header + prelude + beginning + middle + ending + footer;
+      w=window.open();
+      w.document.write(toPrint);
+      //setTimeout(function(){w.print();w.close()},700);
+    }
+  }
+
+  function addSupplyToDatabase(){
+    var url = '/api/requisition/add';
+    $.get(url,{waresObject:suppliesTmp})
+      .done(function(data){
+        $('#dgSupplies').datagrid('reload');
+        $('#dgSuppliesWares').datagrid('reload');
+        $('#dlgNewDelivery').dialog('close')
+      })
+      .fail(function(data){
+        $.messager.show({    // show error message
+          title: 'Błąd',
+          msg: data.responseText
+        })
+      })
+  }
+
+  function newRequisition(){
+    suppliesTmp = [];
+    $('#dlgNewDelivery').dialog('open').dialog('setTitle',"Nowe zapotrzebowanie");
+  }
+  function removeRequisition() {
+    var row = $('#dgSupplies').datagrid('getSelected');
+    var url = '/api/requisition/delete';
+    if (row){
+      $.get(url, {id: row.id})
+        .done(function (data) {
+          $('#dgSupplies').datagrid('reload');
+          $('#dgSuppliesWares').datagrid('loadData', []);
+        })
+        .fail(function (data) {
+          $.messager.show({    // show error message
+            title: 'Błąd',
+            msg: data.responseText
+          })
+        })
+    }
+  }
+  function editItemDialog(){
+    var row = $('#dgSuppliesWaresInDialog').datagrid('getSelected');
+    if(row) {
+      editFlag = true;
+      $('#dlgItem').dialog('open').dialog('setTitle', 'Edycja towaru');
+      $('#fmItem').form('load',row);
+    }
+  }
+  function addItemDialog(){
+    editFlag = false;
+    $('#dlgItem').dialog('open').dialog('setTitle','Nowy towar');
+    $('#fmItem').form('clear');
+  }
+  function addItem(){
+    var data = {};
+    data['quantity'] = $('#fmItem').find('input[name="quantity"]').val();
+    data['name'] = $('#fmItem').find('input[name="name"]').val();
+    if(!editFlag) {
+      suppliesTmp.push(data);
+    }
+    else if(editFlag){
+      var row = $('#dgSuppliesWaresInDialog').datagrid('getSelected');
+      var rowIndex = $('#dgSuppliesWaresInDialog').datagrid('getRowIndex',row);
+      suppliesTmp[rowIndex] = data;
+    }
+    $('#dlgItem').dialog('close');
+    $('#dgSuppliesWaresInDialog').datagrid('loadData', suppliesTmp);
+  }
+  function removeItem(){
+    var row = $('#dgSuppliesWaresInDialog').datagrid('getSelected');
+    if(row) {
+      var rowIndex = $('#dgSuppliesWaresInDialog').datagrid('getRowIndex', row);
+      suppliesTmp.splice(rowIndex, 1);
+    }
+    $('#dgSuppliesWaresInDialog').datagrid('loadData', suppliesTmp);
+  }
+
+</script>
+</body>
+</html>

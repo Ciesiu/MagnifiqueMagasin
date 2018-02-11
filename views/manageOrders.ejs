@@ -72,7 +72,7 @@
         <tr>
           <th field="name" width="10">Nazwa</th>
           <th field="quantity" width="20">Ilość</th>
-          <th field="warehouseSector" width="20">Sektor</th>
+          <th field="warehouseSectorName" width="20">Sektor</th>
         </tr>
         </thead>
       </table>
@@ -146,6 +146,7 @@
       $('#orderButton').addClass("selected");
       $('#reportButton').removeClass("selected");
       $('#userButton').removeClass("selected");
+      $('#requisitionButton').removeClass("selected");
   })
 
   $('#dgSupplies').datagrid({
@@ -191,16 +192,19 @@
   function removeSupply(){
     var row = $('#dgSupplies').datagrid('getSelected');
     var url = '/api/delivery/delete';
-    $.get(url,{id:row.id})
-      .done(function(data){
-        $('#dgSupplies').datagrid('reload');
-      })
-      .fail(function(data){
-        $.messager.show({    // show error message
-          title: 'Błąd',
-          msg: data.responseText
+    if(row) {
+      $.get(url, {id: row.id})
+        .done(function (data) {
+          $('#dgSupplies').datagrid('reload');
+          $('#dgSuppliesWares').datagrid('loadData', []);
         })
-      })
+        .fail(function (data) {
+          $.messager.show({    // show error message
+            title: 'Błąd',
+            msg: data.responseText
+          })
+        })
+    }
   }
   function editItemDialog(){
     var row = $('#dgSuppliesWaresInDialog').datagrid('getSelected');
@@ -234,8 +238,10 @@
   }
   function removeItem(){
     var row = $('#dgSuppliesWaresInDialog').datagrid('getSelected');
-    var rowIndex = $('#dgSuppliesWaresInDialog').datagrid('getRowIndex',row);
-    suppliesTmp.splice(rowIndex,1);
+    if(row) {
+      var rowIndex = $('#dgSuppliesWaresInDialog').datagrid('getRowIndex', row);
+      suppliesTmp.splice(rowIndex, 1);
+    }
     $('#dgSuppliesWaresInDialog').datagrid('loadData', suppliesTmp);
   }
 </script>

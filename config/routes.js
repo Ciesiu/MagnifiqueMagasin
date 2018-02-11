@@ -90,6 +90,11 @@ module.exports.routes = {
   'get /api/delivery/getWares': 'SupplyDeliveryAPIController.getDeliveryWares',
   'get /api/delivery/delete': 'SupplyDeliveryAPIController.deleteDelivery',
 
+  'get /api/requisition/get': 'SupplyOrderAPIController.getOrders',
+  'get /api/requisition/add': 'SupplyOrderAPIController.addOrder',
+  'get /api/requisition/getWares': 'SupplyOrderAPIController.getOrderWares',
+  'get /api/requisition/delete': 'SupplyOrderAPIController.deleteOrder',
+
   '/login':{
     view: 'login'
   },
@@ -107,5 +112,8 @@ module.exports.routes = {
   },
   '/manageReports':{
     view: 'manageReports'
+  },
+  '/manageRequisitions':{
+    view: 'manageRequisitions'
   }
 };

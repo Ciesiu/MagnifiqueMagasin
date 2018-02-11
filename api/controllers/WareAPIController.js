@@ -61,16 +61,19 @@ module.exports = {
     var delObj = req.param('waresObject');
     //console.log(delObj);
     //delObj = JSON.parse(delObj);
-    delObj.forEach(function(item){
-      delete item.warehouseSectorName;
-      item['status'] = 'dostepne';
-    })
-    WareAPI.create(delObj).exec(function(err){
-      if(err){
-        return res.serverError(err);
-      }
-      consolidateWares(res);
-    })
+    if(delObj) {
+      delObj.forEach(function (item) {
+        delete item.warehouseSectorName;
+        item['status'] = 'dostepne';
+      })
+      WareAPI.create(delObj).exec(function (err) {
+        if (err) {
+          return res.serverError(err);
+        }
+        consolidateWares(res);
+      })
+    }
+    else return res.serverError("Nie można zapisać pustej dostawy");
   },
 
   getWaresByOrder: function(req,res){

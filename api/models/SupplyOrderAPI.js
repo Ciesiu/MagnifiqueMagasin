@@ -9,10 +9,7 @@ module.exports = {
 
   attributes: {
     wares:{
-      type: 'object'
-    },
-    status:{
-      type: 'string'
+      type: 'text'
     }
   }
 };
