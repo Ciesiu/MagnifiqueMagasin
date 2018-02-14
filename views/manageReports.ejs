@@ -7,6 +7,8 @@
 
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
   <script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+
 
   <style>
     .no-js #loader { display: none;  }
@@ -20,6 +22,31 @@
       z-index: 9999;
       background: url("/images/loading.gif") center no-repeat #fff;
     }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #section-to-print, #section-to-print * {
+        visibility: visible;
+      }
+      #section-to-print {
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+    }
+    .reportButton{
+      width:250px;
+      height:35px;
+      margin-bottom:3px;
+    }
+    table{
+      border-collapse:collapse;
+    }
+    th, td {
+      border: solid 1px black;
+    }
   </style>
 
   <script>
@@ -31,14 +58,37 @@
     }
   </script>
 </head>
-<body>
+<body style="overflow:hidden">
 <div class="se-pre-con"></div>
 
 <div id="navBar">
   <%- partial('./navbar.ejs') %>
 </div>
 
+<div id="buttons" style="float:left;width:50%">
+  <div class="easyui-panel" style="width:99%;padding:30px 60px;height:500px">
+    <input type="button" style="width:250px" class="easyui-linkbutton reportButton" value=" Zbiorczy raport z dostaw " onclick="generateSupplyReport()"><br/>
+    <input type="button" style="width:250px" class="easyui-linkbutton reportButton" value=" Zbiorczy raport stanu magazynowego " onclick="generateItemsReport()"><br/>
+    <input type="button" style="width:250px" class="easyui-linkbutton reportButton" value=" Zbiorczy raport z zapotrzebowań " onclick="generateRequisitionReport()">
+  </div>
+</div>
+<div id="params" style="float:left;width:50%">
+  <div class="easyui-panel" style="width:99%;padding:30px 60px;height:500px">
+    <h3>Daty:</h3>
+    <div style="margin-bottom:20px">
+      <input id="start" class="easyui-datebox" label="Od:" labelPosition="left" style="width:100%;">
+    </div>
+    <div style="margin-bottom:20px">
+      <input id="stop" class="easyui-datebox" label="Do:" labelPosition="left" style="width:100%;">
+    </div>
+  </div>
+</div>
+
+
+
+<div id="section-to-print"></div>
 <script>
+
   $('document').ready(function(){
     $('#wareButton').removeClass("selected");
     $('#sectorButton').removeClass("selected");
@@ -47,6 +97,124 @@
     $('#userButton').removeClass("selected");
     $('#requisitionButton').removeClass("selected");
   })
+
+
+  function generateRequisitionReport(){
+    var start = $('#start').val();
+    var stop = $('#stop').val();
+    var startDate
+    if(start) startDate = new Date(start);
+    else startDate = "";
+    var stopDate
+    if(stop){
+      stopDate = new Date(stop);
+      stopDate.setHours(stopDate.getHours()+23);
+    }
+    else stopDate = "";
+
+    $.get("/api/requisition/getRaw",{startDate:startDate,stopDate:stopDate})
+      .done(function(data){
+        console.log(data);
+        var report = $("#section-to-print");
+        report.html("");
+        /////////////////////////////////////////////
+        report.append("<h1>Zapotrzebowania</h1>");
+        if(start && stop){
+          report.append("<h2>"+moment(startDate).format('DD/MM/YYYY')+" - "+moment(stopDate).format('DD/MM/YYYY')+"</h2>")
+        }
+        data.forEach(function(item,index){
+          report.append("<h2>"+ (+index+1) +". Zapotrzebowanie ID: "+item.id+" z dnia: "+ item.createdAt +"</h2>")
+
+          report.append("<table id='tabs"+ index +"' style='width:100%'><tr><th>L.p.</th><th>Nazwa</th><th>Ilość</th></tr></table>")
+          JSON.parse(item.wares).forEach(function(subItem,subIndex){
+            $('#tabs'+index).append("<tr><td>"+ (+subIndex+1) +"</td><td>"+ subItem.name +"</td><td>"+ subItem.quantity +"</td></tr>")
+          })
+          report.append("<br/><br/>")
+        })
+
+
+        /////////////////////////////////////////////
+        window.print();
+      })
+      .fail(function(data){
+        $.messager.show({    // show error message
+          title: 'Błąd',
+          msg: data.responseText
+        })
+      })
+  }
+  function generateItemsReport(){
+    $.get("/api/ware/getRaw")
+      .done(function(data){
+        console.log(data);
+        var report = $("#section-to-print");
+        report.html("");
+        //////////////////////////////////
+        report.append("<h1>Towary</h1>");
+
+        report.append("<table style='width:100vw;border:1px solid black;text-align:center' id='tabs'><tr><th>L.p.</th><th>Nazwa</th><th>Ilość</th><th>Położenie</th><th>Status</th></tr></table>")
+        data.forEach(function(item,index){
+          $('#tabs').append("<tr><td>"+ (+index+1) +"</td><td>"+ item.name +"</td><td>"+ item.quantity +"</td><td>"+ item.fullSectorName +"</td><td>"+ item.status +"</td></tr>")
+        })
+        //report.append("</table>");
+
+        /////////////////////////////////////////////
+        window.print();
+        //////////////////////////////////
+      })
+      .fail(function(data){
+        $.messager.show({    // show error message
+          title: 'Błąd',
+          msg: data.responseText
+        })
+      })
+  }
+  function generateSupplyReport(){
+    var start = $('#start').val();
+    var stop = $('#stop').val();
+    var startDate
+    if(start) startDate = new Date(start);
+    else startDate = "";
+    var stopDate
+    if(stop){
+      stopDate = new Date(stop);
+      stopDate.setHours(stopDate.getHours()+23);
+    }
+    else stopDate = "";
+
+
+    $.get("/api/delivery/getRaw",{startDate:startDate,stopDate:stopDate})
+      .done(function(data){
+        console.log(data);
+        var report = $("#section-to-print");
+        report.html("");
+        /////////////////////////////////////////////
+        report.append("<h1>Dostawy</h1>");
+        if(start && stop){
+          report.append("<h2>"+moment(startDate).format('DD/MM/YYYY')+" - "+moment(stopDate).format('DD/MM/YYYY')+"</h2>")
+        }
+        data.forEach(function(item,index){
+          report.append("<h2>"+ (+index+1) +". Dostawa ID: "+item.id+" z dnia: "+ item.createdAt +"</h2>")
+
+          report.append("<table id='tabs"+ index +"' style='width:100%'><tr><th>L.p.</th><th>Nazwa</th><th>Ilość</th></tr></table>")
+          JSON.parse(item.wares).forEach(function(subItem,subIndex){
+            $('#tabs'+index).append("<tr><td>"+ (+subIndex+1) +"</td><td>"+ subItem.name +"</td><td>"+ subItem.quantity +"</td></tr>")
+          })
+          report.append("<br/><br/>")
+        })
+
+
+        /////////////////////////////////////////////
+        window.print();
+      })
+      .fail(function(data){
+        $.messager.show({    // show error message
+          title: 'Błąd',
+          msg: data.responseText
+        })
+      })
+  }
 </script>
+
 </body>
 </html>

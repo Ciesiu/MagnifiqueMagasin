@@ -4,6 +4,7 @@
  * @description :: Server-side logic for managing supplydeliveryapis
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
+var moment = require('moment');
 
 module.exports = {
   /*addItemToDelivery: function(req,res){
@@ -28,6 +29,24 @@ module.exports = {
 
 
   },*/
+  getDeliveriesRaw: function(req,res){
+    var startDate = req.param('startDate');
+    var stopDate = req.param('stopDate');
+
+    var search = {};
+    if(startDate && stopDate) search = {createdAt: { '>=': new Date(startDate), '<=': new Date(stopDate) }};
+
+    SupplyDeliveryAPI.find(search).exec(function(err,found){
+      if(err){
+        return res.serverError(err)
+      }
+      found.forEach(function(item){
+        item.createdAt = moment(item.createdAt).format('DD/MM/YYYY');
+      })
+      return res.json(found);
+    })
+  },
+
 	getDeliveries: function(req,res){
     var page = req.param("page");
     var rows = req.param("rows");
@@ -45,6 +64,9 @@ module.exports = {
         if(err){
           return res.serverError(err);
         }
+        found.forEach(function(item){
+          item.createdAt = moment(item.createdAt).format('DD/MM/YYYY');
+        })
         return res.json({rows: found, total:count});
       })
     })

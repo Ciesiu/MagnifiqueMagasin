@@ -55,6 +55,7 @@ module.exports.routes = {
   'get /api/ware/addOrder': 'WareAPIController.addWareToOrder',
   'get /api/ware/removeOrder': 'WareAPIController.removeWareFromOrder',
   'get /api/ware/unloadDelivery': 'WareAPIController.unloadDelivery',
+  'get /api/ware/getRaw': 'WareAPIController.getItemsRaw',
 
 
   'get /api/order/get': 'OrderAPIController.getOrders',
@@ -86,6 +87,7 @@ module.exports.routes = {
   'get /api/user/changePasswd': 'LoginAPIController.changePasswd',
 
   'get /api/delivery/get': 'SupplyDeliveryAPIController.getDeliveries',
+  'get /api/delivery/getRaw': 'SupplyDeliveryAPIController.getDeliveriesRaw',
   'get /api/delivery/add': 'SupplyDeliveryAPIController.addDelivery',
   'get /api/delivery/getWares': 'SupplyDeliveryAPIController.getDeliveryWares',
   'get /api/delivery/delete': 'SupplyDeliveryAPIController.deleteDelivery',
@@ -94,6 +96,7 @@ module.exports.routes = {
   'get /api/requisition/add': 'SupplyOrderAPIController.addOrder',
   'get /api/requisition/getWares': 'SupplyOrderAPIController.getOrderWares',
   'get /api/requisition/delete': 'SupplyOrderAPIController.deleteOrder',
+  'get /api/requisition/getRaw': 'SupplyOrderAPIController.getOrdersRaw',
 
   '/login':{
     view: 'login'

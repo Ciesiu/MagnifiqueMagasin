@@ -20,6 +20,20 @@
       z-index: 9999;
       background: url("/images/loading.gif") center no-repeat #fff;
     }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #section-to-print, #section-to-print * {
+        visibility: visible;
+      }
+      #section-to-print {
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+    }
   </style>
 
   <script>
@@ -31,7 +45,7 @@
     }
   </script>
 </head>
-<body>
+<body style="overflow:hidden">
 <div class="se-pre-con"></div>
 
 <div id="navBar">
@@ -40,7 +54,7 @@
 <div id="data">
   <div id="leftColumn" style="width:30%;float:left">
     <!--datagrid-->
-    <table id="dgSupplies" title="Zapotrzebowania" style="width:100%;min-height:414px"
+    <table id="dgSupplies" title="Zapotrzebowania" style="width:99%;min-height:414px"
            class="easyui-datagrid"
            method="GET"
            toolbar="#toolbarSupplies"
@@ -59,11 +73,11 @@
     <div id="toolbarSupplies">
       <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newRequisition()">Zgłoś zapotrzebowanie</a>
       <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="removeRequisition()">Usuń zapotrzebowanie</a>
-      <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="print()">Drukuj</a>
+      <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="printPage()">Drukuj</a>
     </div>
   </div>
   <div id="rightColumn" style="width:70%;float:left">
-    <table id="dgSuppliesWares" title="Towar" style="width:100%;min-height:414px"
+    <table id="dgSuppliesWares" title="Towar" style="width:99%;min-height:414px"
            class="easyui-datagrid"
            method="GET"
            rownumbers="true"
@@ -78,8 +92,30 @@
       </thead>
     </table>
   </div>
+
+
+
+
+
 </div>
 
+<div id="section-to-print" style="visibility:hidden">
+  <h1 id="haJeden"></h1>
+  <table id="dgPrintable" title="Towar" style="width:100%"
+         class="easyui-datagrid"
+         method="GET"
+         rownumbers="true"
+         fitColumns="true"
+         singleSelect="true"
+  >
+    <thead>
+    <tr>
+      <th field="name" width="10">Nazwa</th>
+      <th field="quantity" width="20">Ilość</th>
+    </tr>
+    </thead>
+  </table>
+</div>
 
 <div id="dlgItem" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
      closed="true" modal="true" buttons="#dlgItem-buttons">
@@ -130,6 +166,7 @@
 
 
 <script>
+
   var suppliesTmp = [];
   var editFlag = false;
   $('document').ready(function(){
@@ -145,30 +182,15 @@
     onSelect: function(index,row){
       console.log(row.wares);
       $('#dgSuppliesWares').datagrid('loadData', JSON.parse(row.wares));
+      $('#haJeden').text("Wykaz zapotrzebowania ID: "+row.id);
     }
   });
 
-  function print(){
+  function printPage(){
     var row = $('#dgSupplies').datagrid('getSelected');
     if(row){
-      var header = "<html><head>" +
-        "<style>" +
-        "table th td { border: 1px solid black }" +
-        "table { border-collapse: collapse }" +
-        "</style>" +
-        "</head><body>";
-      var prelude = "<h3>Raport zapotrzebowania o ID:"+ row.id +"</h3><br/><br/>"
-      var beginning = "<table><tr><th>L.p.</th><th>Nazwa</th><th>Ilość</th></tr>"
-      var ending = "</table class='report'><br/><br/>Wygenerowano: "+row.createdAt;
-      var middle = "";
-      var footer = "</body></html>";
-      JSON.parse(row.wares).forEach(function(item,index){
-        middle += "<tr><td>"+ (+index + 1) +"</td><td>"+ item.name +"</td><td>"+ item.quantity +"</td></tr>"
-      })
-      var toPrint = header + prelude + beginning + middle + ending + footer;
-      w=window.open();
-      w.document.write(toPrint);
-      //setTimeout(function(){w.print();w.close()},700);
+      $('#dgPrintable').datagrid('loadData',JSON.parse(row.wares));
+      window.print();
     }
   }
 
@@ -190,6 +212,7 @@
 
   function newRequisition(){
     suppliesTmp = [];
+    $('#dgSuppliesWaresInDialog').datagrid('loadData',[]);
     $('#dlgNewDelivery').dialog('open').dialog('setTitle',"Nowe zapotrzebowanie");
   }
   function removeRequisition() {

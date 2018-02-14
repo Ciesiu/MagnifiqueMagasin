@@ -57,6 +57,23 @@ function consolidateWares(res){
 
 module.exports = {
 
+  getItemsRaw: function(req,res){
+    WareAPI.find({}).populate('warehouseSector').exec(function(err,found){
+      if(err){
+        return res.serverError(err);
+      }
+      console.log(found);
+      found.forEach(function(item){
+        WarehouseAPI.findOne({id:item.warehouseSector.warehouse}).exec(function(err,mag){
+          if(err) return res.serverError(err);
+          item['fullSectorName'] = mag.name+": "+item.warehouseSector.name;
+        })
+      })
+      setTimeout(function(){
+        return res.json(found);
+      },500)
+    })
+  },
   unloadDelivery: function(req,res){
     var delObj = req.param('waresObject');
     //console.log(delObj);
