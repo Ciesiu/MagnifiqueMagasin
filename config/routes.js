@@ -19,6 +19,14 @@
  * For more information on configuring custom routes, check out:
  * http://sailsjs.org/#!/documentation/concepts/Routes/RouteTargetSyntax.html
  */
+const passport = require('passport');
+
+const env = {
+  AUTH0_CLIENT_ID: 'MSSVKVwIGMgqx1GZFMQ14JT8inSWDSar',
+  AUTH0_DOMAIN: 'ciesiu.eu.auth0.com',
+  AUTH0_CALLBACK_URL: 'http://localhost:1337/manageWares'
+};
+
 
 module.exports.routes = {
 
@@ -32,9 +40,10 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  '/': {
-    view: 'login'
-  },
+  // '/': {
+  //   view: 'login'
+  // },
+
 
   /***************************************************************************
   *                                                                          *
@@ -98,12 +107,30 @@ module.exports.routes = {
   'get /api/requisition/delete': 'SupplyOrderAPIController.deleteOrder',
   'get /api/requisition/getRaw': 'SupplyOrderAPIController.getOrdersRaw',
 
-  '/login':{
-    view: 'login'
+  'GET /login':{
+    view: 'login2'
   },
-  '/manageUsers':{
-    view: 'manageUsers'
-  },
+  'POST /login': 'AuthController.login',
+  '/logout': 'AuthController.logout',
+  'GET /register': { view: 'register' },
+  // '/manageWares': [
+  //   passport.authenticate('auth0', { failureRedirect: '/login' }),
+  //   function(req, res) {
+  //     if (!req.user) {
+  //       throw new Error('user null');
+  //     }
+  //     res.redirect("/");
+  //   }
+  // ],
+  // '/login': [
+  //   passport.authenticate('auth0', {}),
+  //   function (req, res) {
+  //     res.redirect("/");
+  //   }
+  // ],
+  // '/manageUsers':{
+  //   view: 'manageUsers'
+  // },
   '/manageSectors':{
     view: 'manageSectors'
   },

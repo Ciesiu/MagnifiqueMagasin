@@ -19,6 +19,25 @@
  */
 
 
+// const passport = require('passport');
+// const Auth0Strategy = require('passport-auth0');
+//
+//
+// // Configure Passport to use Auth0
+// const strategy = new Auth0Strategy(
+//   {
+//     domain: 'ciesiu.eu.auth0.com',
+//     clientID: 'MSSVKVwIGMgqx1GZFMQ14JT8inSWDSar',
+//     clientSecret: 't7lP5eKmDubN0d8vgRhB4m3noVWNlEWzD8IKyReHrzBjX5qg6o1JGVYFCaV00Dpu',
+//     callbackURL: 'http://localhost:1337/manageWares'
+//   },
+//   function(accessToken, refreshToken, extraParams, profile, done) {
+//     return done(null, profile);
+//   }
+// );
+// passport.use(strategy);
+
+
 // Ensure we're in the project directory, so cwd-relative paths work as expected
 // no matter where we actually lift from.
 // > Note: This is not required in order to lift, but it is a convenient default.
@@ -58,3 +77,6 @@ try {
 
 // Start server
 sails.lift(rc('sails'));
+
+
+
