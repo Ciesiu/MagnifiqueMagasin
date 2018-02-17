@@ -27,6 +27,14 @@ const env = {
   AUTH0_CALLBACK_URL: 'http://localhost:1337/manageWares'
 };
 
+function loggedIn(req, res, next) {
+  if (req.user) {
+    next();
+  } else {
+    res.redirect('/login');
+  }
+}
+
 
 module.exports.routes = {
 
@@ -108,7 +116,7 @@ module.exports.routes = {
   'get /api/requisition/getRaw': 'SupplyOrderAPIController.getOrdersRaw',
 
   'GET /login':{
-    view: 'login2'
+    view: 'login'
   },
   'POST /login': 'AuthController.login',
   '/logout': 'AuthController.logout',
@@ -128,9 +136,9 @@ module.exports.routes = {
   //     res.redirect("/");
   //   }
   // ],
-  // '/manageUsers':{
-  //   view: 'manageUsers'
-  // },
+  '/manageUsers':{
+    view: 'manageUsers'
+  },
   '/manageSectors':{
     view: 'manageSectors'
   },

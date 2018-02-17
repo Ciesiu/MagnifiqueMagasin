@@ -8,7 +8,7 @@ passport.serializeUser(function(user, cb) {
 
 passport.deserializeUser(function(id, cb){
   User.findOne({id}, function(err, user) {
-    cb(err, users);
+    cb(err, user);
   });
 });
 
@@ -16,16 +16,18 @@ passport.use(new LocalStrategy({
   usernameField: 'username',
   passportField: 'password'
 }, function(username, password, cb){
-  User.findOne({username: username}, function(err, user){
+  User.findOne({userName: username}, function(err, user){
     if(err) return cb(err);
     if(!user) return cb(null, false, {message: 'Username not found'});
 
     bcrypt.compare(password, user.password, function(err, res){
       if(!res) return cb(null, false, { message: 'Invalid Password' });
       let userDetails = {
-        email: user.email,
-        username: user.username,
-        id: user.id
+        userName: user.userName,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        id: user.id,
+        role: user.role
       };
       return cb(null, userDetails, { message: 'Login Succesful'});
     });

@@ -42,21 +42,27 @@
   function auth(){
     var login = $("#login").val();
     var pass = $("#password").val();
-    pass = CryptoJS.MD5(pass).toString();
+    //pass = CryptoJS.MD5(pass).toString();
 
-    var address = 'http://localhost:1337/api/user/check';
+    var address = 'http://localhost:1337/login';
 
-    $.get(address,{login:login,password:pass})
+    $.post(address,{username:login,password:pass})
       .done(function(data){
-        if(data.found=='none') alert("Niepoprawny login lub hasło");
-        else{
-          sessionStorage.setItem('login',data.found.userName);
-          sessionStorage.setItem('role',data.found.role);
-          sessionStorage.setItem('firstName',data.found.firstName);
-          sessionStorage.setItem('lastName',data.found.lastName);
-          sessionStorage.setItem('id',data.found.id);
-
-          window.location.replace('/manageWares');
+        console.log(data);
+        // sessionStorage.setItem('login',data.found.userName);
+        // sessionStorage.setItem('role',data.found.role);
+        // sessionStorage.setItem('firstName',data.found.firstName);
+        // sessionStorage.setItem('lastName',data.found.lastName);
+        // sessionStorage.setItem('id',data.found.id);
+        //
+        // window.location.replace('/manageWares');
+        if(data.user){
+          sessionStorage.setItem('login',data.user.userName);
+          sessionStorage.setItem('role',data.user.role);
+          sessionStorage.setItem('firstName',data.user.firstName);
+          sessionStorage.setItem('lastName',data.user.lastName);
+          sessionStorage.setItem('id',data.user.id);
+          window.location.replace('/manageWares')
         }
       })
 

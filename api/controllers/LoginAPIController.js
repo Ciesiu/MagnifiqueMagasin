@@ -104,7 +104,7 @@ module.exports = {
   authUser: function(req,res){
     var login = req.param("login");
     var pass = req.param("password");
-    LoginAPI.count({userName:login,password:pass}).exec(function(err,found){
+    User.count({userName:login,password:pass}).exec(function(err,found){
       if (err) {
         return res.serverError(err);
       }
@@ -120,12 +120,12 @@ module.exports = {
     var oldPass = req.param("oldPassword");
     var newPass = req.param("newPassword");
 
-    LoginAPI.findOne({id:id,password:oldPass}).exec(function(err,found){
+    User.findOne({id:id,password:oldPass}).exec(function(err,found){
       if(err){
         return res.serverError(err);
       }
       if(found){
-        LoginAPI.update({id:id},{password:newPass}).exec(function(err){
+        User.update({id:id},{password:newPass}).exec(function(err){
           if(err){
             return res.serverError(err);
           }
@@ -146,11 +146,11 @@ module.exports = {
     var sortString;
     if(sort&&order) sortString = sort+" "+order;
     else sortString = "id asc";
-    LoginAPI.count({}).exec(function(err,count){
+    User.count({}).exec(function(err,count){
       if(err){
         return res.serverError(err);
       }
-      LoginAPI.find({}).sort(sortString).paginate({page:page,limit:rows}).exec(function(err,found){
+      User.find({}).sort(sortString).paginate({page:page,limit:rows}).exec(function(err,found){
         if(err){
           return res.serverError(err);
         }
@@ -159,17 +159,17 @@ module.exports = {
     })
   },
 
-  checkUser: function(req,res){
-    var login = req.param("login");
-    var pass = req.param("password");
-    LoginAPI.findOne({userName:login,password:pass}).exec(function(err,found){
-      if(err){
-        return res.serverError(err);
-      }
-      if(found) return res.json({found:found});
-      else return res.json({found:'none'});
-    })
-  },
+  // checkUser: function(req,res){
+  //   var login = req.param("login");
+  //   var pass = req.param("password");
+  //   LoginAPI.findOne({userName:login,password:pass}).exec(function(err,found){
+  //     if(err){
+  //       return res.serverError(err);
+  //     }
+  //     if(found) return res.json({found:found});
+  //     else return res.json({found:'none'});
+  //   })
+  // },
 
   addUser: function(req,res){
     var login = req.param("userName");
@@ -183,7 +183,7 @@ module.exports = {
     userData['firstName'] = firstName;
     userData['lastName'] = lastName;
     userData['role'] = role;
-    LoginAPI.find({userName:login}).exec(function(err,found){
+    User.find({userName:login}).exec(function(err,found){
       if(err){
         return res.serverError(err);
       }
@@ -191,7 +191,7 @@ module.exports = {
         return res.serverError("Podany login jest już zajęty");
       }
       else{
-        LoginAPI.create(userData).exec(function(err,user){
+        User.create(userData).exec(function(err){
           if (err) {
             return res.serverError(err);
           }
@@ -203,7 +203,7 @@ module.exports = {
 
   removeUser: function(req,res){
     var userId = req.param('id');
-    LoginAPI.destroy({id: userId}).exec(function(err){
+    User.destroy({id: userId}).exec(function(err){
       if (err) {
         return res.serverError(err);
       }
@@ -224,7 +224,7 @@ module.exports = {
     if(firstName) userData['firstName'] = firstName;
     if(lastName) userData['lastName'] = lastName;
     if(role) userData['role'] = role;
-    LoginAPI.update({id: userId},userData).exec(function(err){
+    User.update({id: userId},userData).exec(function(err){
       if (err) {
         return res.serverError(err);
       }
