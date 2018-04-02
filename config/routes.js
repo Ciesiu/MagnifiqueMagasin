@@ -96,12 +96,13 @@ module.exports.routes = {
   'get /api/sector/delete': 'WarehouseSectorAPIController.removeSector',
   'get /api/sector/getFullNames': 'WarehouseSectorAPIController.getSectorsFullNamesCombo',
 
-  'get /api/user/check': 'LoginAPIController.checkUser',
+  //'get /api/user/check': 'LoginAPIController.checkUser',
   'get /api/user/add': 'LoginAPIController.addUser',
   'get /api/user/getAll': 'LoginAPIController.getAllUsers',
   'get /api/user/update': 'LoginAPIController.updateUser',
   'get /api/user/delete': 'LoginAPIController.removeUser',
   'get /api/user/changePasswd': 'LoginAPIController.changePasswd',
+  'get /api/user/changeUserPasswd': 'LoginAPIController.changeUserPasswd',
 
   'get /api/delivery/get': 'SupplyDeliveryAPIController.getDeliveries',
   'get /api/delivery/getRaw': 'SupplyDeliveryAPIController.getDeliveriesRaw',

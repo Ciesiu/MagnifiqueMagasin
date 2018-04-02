@@ -28,13 +28,13 @@
      closed="true" buttons="#passdlg-buttons">
   <form id="passfm" name="fm" method="get" novalidate>
     <div style="margin-bottom:5px;margin-top:10px">
-      <input id="oldPassword" type="password" label="Stare hasło:" style="width:100%" class="easyui-textbox" required="true">
+      <input id="oldPassword" type="password" label="Stare hasło:" labelWidth="150px" style="width:100%" class="easyui-textbox" required="true">
     </div>
     <div style="margin-bottom:5px;margin-top:10px">
-      <input id="newPassword" type="password" label="Nowe hasło:" style="width:100%" class="easyui-textbox" required="true">
+      <input id="newPassword" type="password" label="Nowe hasło:" labelWidth="150px" style="width:100%" class="easyui-textbox" required="true">
     </div>
-    <div style="margin-bottom:5px">
-      <input id="newPassword2" type="password" label="Powtórz nowe hasło:" style="width:100%" class="easyui-textbox" required="true">
+    <div style="margin-bottom:5px;margin-top:10px">
+      <input id="newPassword2" type="password" label="Powtórz nowe hasło:" labelWidth="150px" style="width:100%" class="easyui-textbox" required="true">
     </div>
   </form>
 </div>
@@ -73,9 +73,9 @@
     var newPass2 = $('#newPassword2').val();
     url = '/api/user/changePasswd';
     if(newPassRaw.localeCompare(newPass2)==0){
-      var oldPassEnc = CryptoJS.MD5(oldPassRaw).toString();
-      var newPassEnc = CryptoJS.MD5(newPassRaw).toString();
-      $.get(url,{id:id,oldPassword:oldPassEnc,newPassword:newPassEnc})
+      //var oldPassEnc = CryptoJS.MD5(oldPassRaw).toString();
+      //var newPassEnc = CryptoJS.MD5(newPassRaw).toString();
+      $.get(url,{id:id,username:sessionStorage.getItem('login'),password:oldPassRaw,newPassword:newPassRaw})
         .done(function(data){
           $('#passdlg').dialog('close');
           $.messager.show({    // show error message

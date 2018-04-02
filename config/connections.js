@@ -48,12 +48,19 @@ module.exports.connections = {
   //   database: 'YOUR_MYSQL_DB' //optional
   // },
 
+  // localMysqlServer:{
+  //   adapter: 'sails-mysql',
+  //   host: '127.0.0.1',
+  //   user: 'root',
+  //   password: '',
+  //   database: 'test01'
+  // },
   localMysqlServer:{
     adapter: 'sails-mysql',
-    host: '127.0.0.1',
+    host: 'warehousedb.clfibtagaxgz.eu-central-1.rds.amazonaws.com',
     user: 'root',
-    password: '',
-    database: 'test01'
+    password: 'rootroot',
+    database: 'warehouseDB'
   },
   /***************************************************************************
   *                                                                          *

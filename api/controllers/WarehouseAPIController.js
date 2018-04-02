@@ -32,7 +32,7 @@ module.exports = {
       if(err){
         return res.serverError(err);
       }
-      found[0]['selected'] = "true";
+      if(found.constructor === Array && found.length>0) found[0]['selected'] = "true";
       return res.json(found);
     })
   },

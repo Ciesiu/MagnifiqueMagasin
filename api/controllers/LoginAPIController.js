@@ -4,7 +4,9 @@
  * @description :: Server-side logic for managing loginapis
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
-var request = require('request');
+const bcrypt = require('bcrypt-nodejs');
+const passport = require('passport');
+
 
 module.exports = {
   /*
@@ -117,25 +119,52 @@ module.exports = {
 
   changePasswd: function(req,res){
     var id = req.param("id");
-    var oldPass = req.param("oldPassword");
+    var oldPass = req.param("password");
     var newPass = req.param("newPassword");
-
-    User.findOne({id:id,password:oldPass}).exec(function(err,found){
-      if(err){
-        return res.serverError(err);
-      }
-      if(found){
-        User.update({id:id},{password:newPass}).exec(function(err){
-          if(err){
-            return res.serverError(err);
+    console.log("step1")
+    bcrypt.genSalt(10, function(err, salt){
+      bcrypt.hash(newPass, salt, null, function(err, hash){
+        console.log("step2")
+        if(err) return res.serverError(err);
+        console.log("step3")
+        newPass = hash;
+        //zmiana w bazie
+        passport.authenticate('local', function(err, user, info) {
+          if ((err) || (!user)) {
+            console.log("err1")
+            return res.serverError(info.message);
           }
-          return res.ok();
-        })
-      }
-      else{
-        return res.serverError("Podano błędne hasło");
-      }
-    })
+          req.logIn(user, function(err){
+            if(err) req.serverError(err);
+            console.log("step4")
+            User.update({id:id},{password:newPass}).exec(function(err){
+              console.log("step5")
+              if(err){
+                return res.serverError(err);
+              }
+              return res.ok();
+            })
+          });
+        })(req,res);
+      });
+    });
+
+    // User.findOne({id:id,password:oldPass}).exec(function(err,found){
+    //   if(err){
+    //     return res.serverError(err);
+    //   }
+    //   if(found){
+    //     User.update({id:id},{password:newPass}).exec(function(err){
+    //       if(err){
+    //         return res.serverError(err);
+    //       }
+    //       return res.ok();
+    //     })
+    //   }
+    //   else{
+    //     return res.serverError("Podano błędne hasło");
+    //   }
+    // })
   },
 
   getAllUsers: function(req,res){
@@ -209,6 +238,34 @@ module.exports = {
       }
       return res.ok();
     })
+  },
+
+  changeUserPasswd: function(req,res){
+    var userId = req.param('id');
+    var newPass = req.param('password');
+    bcrypt.genSalt(10, function(err, salt){
+      bcrypt.hash(newPass, salt, null, function(err, hash){
+        if(err) return res.serverError(err);
+        newPass = hash;
+        //zmiana w bazie
+        User.findOne({id:userId}).exec(function(err,found){
+          if(err){
+            return res.serverError(err);
+          }
+          if(found){
+            User.update({id:userId},{password:newPass}).exec(function(err){
+              if(err){
+                return res.serverError(err);
+              }
+              return res.ok();
+            })
+          }
+          else{
+            return res.serverError("Nie znaleziono uzytkownika");
+          }
+        })
+      });
+    });
   },
 
   updateUser: function(req,res){

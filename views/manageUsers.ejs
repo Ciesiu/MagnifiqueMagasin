@@ -64,6 +64,7 @@
     <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUserDialog()">Dodaj użytkownika</a>
     <a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUserDialog()">Edytuj użytkownika</a>
     <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteUser()">Usuń użytkownika</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="resetUserPassDialog()">Resetuj hasło użytkownika</a>
   </div>
 </div>
 <div id="dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
@@ -87,12 +88,54 @@
         <option value="user">Zwykły użytkownik</option>
       </select>
     </div>
-    <input type="hidden" name="id"/>
+    <!--<input type="hidden" name="id"/>-->
   </form>
 </div>
 <div id="dlg-buttons">
-  <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width:90px">Zapisz</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="addUser()" style="width:90px">Zapisz</a>
   <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">Anuluj</a>
+</div>
+
+<div id="dlg-update" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+     closed="true" modal="true" buttons="#dlg-update-buttons">
+  <form id="fm-update" name="fm" method="get" novalidate>
+    <div style="margin-bottom:5px;margin-top:10px">
+      <input name="firstName" label="Imię:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <div style="margin-bottom:5px">
+      <input name="lastName" label="Nazwisko:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <div style="margin-bottom:5px">
+      <input name="userName" label="Login:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <div style="margin-bottom:5px">
+      <select id="ccupd" style="width:75%" class="easyui-combobox" name="role" editable="false" label="Rola:" limitToList="true" required="true">
+        <option value="admin">Administrator</option>
+        <option value="user">Zwykły użytkownik</option>
+      </select>
+    </div>
+    <input type="hidden" name="id"/>
+  </form>
+</div>
+<div id="dlg-update-buttons">
+  <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="updateUser()" style="width:90px">Zapisz</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg-update').dialog('close')" style="width:90px">Anuluj</a>
+</div>
+
+<div id="dlg-reset-passwd" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+     closed="true" modal="true" buttons="#dlg-reset-passwd-buttons">
+  <form id="fm-reset-passwd" name="fm" method="get" novalidate>
+    <div style="margin-bottom:5px;margin-top:10px">
+      <input type="password" id="pass1" label="Nowe hasło:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+    <div style="margin-bottom:5px">
+      <input type="password" id="pass2" label="Powtórz hasło:" style="width:100%" class="easyui-textbox" required="true">
+    </div>
+  </form>
+</div>
+<div id="dlg-reset-passwd-buttons">
+  <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="resetUserPass()" style="width:90px">Zapisz</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg-reset-passwd').dialog('close')" style="width:90px">Anuluj</a>
 </div>
 
 <script>
@@ -109,21 +152,70 @@
   function newUserDialog(){
     $('#dlg').dialog('open').dialog('setTitle','Nowy użytkownik');
     $('#fm').form('clear');
-    url = '/api/user/add';
   }
   function editUserDialog(){
     var row = $('#dg').datagrid('getSelected');
     if (row){
-      $('#dlg').dialog('open').dialog('setTitle','Edytuj użytkownika');
-      $('#fm').form('load',row);
-      url = '/api/user/update';
+      $('#dlg-update').dialog('open').dialog('setTitle','Edytuj użytkownika');
+      $('#fm-update').form('load',row);
     }
   }
-  function saveUser(){
-    var raw = $("input[name='password']").val();
-    var enc = CryptoJS.MD5(raw).toString();
-    $("input[name='password']").val(enc);
-    $.get(url,$("#fm").serialize())
+  function resetUserPassDialog(){
+    var row = $('#dg').datagrid('getSelected');
+    if (row){
+      $('#dlg-reset-passwd').dialog('open').dialog('setTitle','Reset hasła użytkownika');
+    }
+  }
+  function resetUserPass(){
+    var userId = $('#dg').datagrid('getSelected').id;
+    var pass1 = $('#pass1').val();
+    var pass2 = $('#pass2').val();
+    if(pass1.localeCompare(pass2)==0){
+      //zapytanie o zmiane hasla
+      $.get("api/user/changeUserPasswd",{id:userId,password:pass1})
+        .done(function(data){
+          $('#dlg-reset-passwd').dialog('close');
+          $.messager.show({    // show error message
+            title: 'OK',
+            msg: "Poprawnie zmieniono hasło"
+          });
+        })
+        .fail(function(data){
+          $.messager.show({    // show error message
+            title: 'Błąd',
+            msg: data.responseText
+          });
+        })
+    }
+    else{
+      $.messager.show({    // show error message
+        title: 'Błąd',
+        msg: "Wprowadzone hasła nie zgadzają się"
+      });
+    }
+  }
+  function updateUser(){
+    $.get("api/user/update",$("#fm-update").serialize())
+      .done(function(data){
+        if (data.serverError){
+          $.messager.show({
+            title: 'Błąd',
+            msg: data.serverError
+          });
+        } else {
+          $('#dlg-update').dialog('close');        // close the dialog
+          $('#dg').datagrid('reload');    // reload the user data
+        }
+      })
+      .fail(function(data){
+        $.messager.show({    // show error message
+          title: 'Błąd',
+          msg: data.responseText
+        });
+      })
+  }
+  function addUser(){
+    $.post("/user",$("#fm").serialize())
       .done(function(data){
         if (data.serverError){
           $.messager.show({
@@ -142,6 +234,30 @@
         });
       })
   }
+
+  // function saveUser(){
+  //   var raw = $("input[name='password']").val();
+  //   var enc = CryptoJS.MD5(raw).toString();
+  //   $("input[name='password']").val(enc);
+  //   $.get(url,$("#fm").serialize())
+  //     .done(function(data){
+  //       if (data.serverError){
+  //         $.messager.show({
+  //           title: 'Błąd',
+  //           msg: data.serverError
+  //         });
+  //       } else {
+  //         $('#dlg').dialog('close');        // close the dialog
+  //         $('#dg').datagrid('reload');    // reload the user data
+  //       }
+  //     })
+  //     .fail(function(data){
+  //       $.messager.show({    // show error message
+  //         title: 'Błąd',
+  //         msg: data.responseText
+  //       });
+  //     })
+  // }
   function deleteUser(){
     var row = $('#dg').datagrid('getSelected');
     if (row){
