@@ -1,12 +1,16 @@
 <html>
 <head>
-  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">
+  <!--<link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">-->
+  <link rel="stylesheet" type="text/css" href="/styles/ui-cupertino/easyui.css">
+
   <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css">
   <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/demo/demo.css">
   <link rel="stylesheet" type="text/css" href="https://www.jeasyui.com/easyui/themes/color.css">
 
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
   <script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
+  <!--<script type="text/javascript" src="/js/stimulsoft-reports-js/scripts/stimulsoft.reports.js"></script>-->
+  <!--<script type="text/javascript" src="/js/stimulsoft-reports-js/scripts/stimulsoft.viewer.js"></script>-->
 
   <style>
     .no-js #loader { display: none;  }
@@ -33,7 +37,7 @@
 </head>
 <body>
   <div class="se-pre-con"></div>
-  <div id="navBar">
+  <div id="navBar" style="margin-left:-20px;margin-top:-20px;padding-left:20px;padding-top:80px;margin-bottom:3px;background-color:#f2f5f7;width:100vw;background-image: url('/images/logo.png');background-repeat:no-repeat">
     <%- partial('./navbar.ejs') %>
   </div>
   <div id="data">
@@ -50,7 +54,7 @@
             url="http://localhost:1337/api/delivery/get">
         <thead>
         <tr>
-          <th field="id" width="10" sortable="true">ID</th>
+          <!--<th field="id" width="10" sortable="true">ID</th>-->
           <th field="createdAt" width="20" sortable="true">Data</th>
         </tr>
         </thead>

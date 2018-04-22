@@ -1,13 +1,17 @@
 <html>
 <head>
-  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">
+  <!--<link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">-->
+  <link rel="stylesheet" type="text/css" href="/styles/ui-cupertino/easyui.css">
   <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css">
   <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/demo/demo.css">
   <link rel="stylesheet" type="text/css" href="https://www.jeasyui.com/easyui/themes/color.css">
+  <!--<link rel="stylesheet" type="text/css" href="/js/stimulsoft-reports-js/styles/stimulsoft.viewer.office2013.darkgrayteal.css">-->
 
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
   <script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+  <!--<script type="text/javascript" src="/js/stimulsoft-reports-js/scripts/stimulsoft.reports.js"></script>-->
+  <!--<script type="text/javascript" src="/js/stimulsoft-reports-js/scripts/stimulsoft.viewer.js"></script>-->
 
 
   <style>
@@ -57,31 +61,35 @@
       window.location.replace('/login');
     }
   </script>
+
 </head>
 <body style="overflow:hidden">
 <div class="se-pre-con"></div>
 
-<div id="navBar">
+<div id="navBar" style="margin-left:-20px;margin-top:-20px;padding-left:20px;padding-top:80px;margin-bottom:3px;background-color:#f2f5f7;width:100vw;background-image: url('/images/logo.png');background-repeat:no-repeat">
   <%- partial('./navbar.ejs') %>
 </div>
 
-<div id="buttons" style="float:left;width:50%">
-  <div class="easyui-panel" style="width:99%;padding:30px 60px;height:500px">
+<div id="buttons" style="float:left;width:270px">
+  <div class="easyui-panel" style="width:99%;padding-top:30px;padding-bottom:30px;height:100%;text-align: center;">
     <input type="button" style="width:250px" class="easyui-linkbutton reportButton" value=" Zbiorczy raport z dostaw " onclick="generateSupplyReport()"><br/>
     <input type="button" style="width:250px" class="easyui-linkbutton reportButton" value=" Zbiorczy raport stanu magazynowego " onclick="generateItemsReport()"><br/>
     <input type="button" style="width:250px" class="easyui-linkbutton reportButton" value=" Zbiorczy raport z zapotrzebowań " onclick="generateRequisitionReport()">
   </div>
 </div>
-<div id="params" style="float:left;width:50%">
-  <div class="easyui-panel" style="width:99%;padding:30px 60px;height:500px">
-    <h3>Daty:</h3>
-    <div style="margin-bottom:20px">
-      <input id="start" class="easyui-datebox" label="Od:" labelPosition="left" style="width:100%;">
-    </div>
-    <div style="margin-bottom:20px">
-      <input id="stop" class="easyui-datebox" label="Do:" labelPosition="left" style="width:100%;">
-    </div>
+<div id="paramDiv" style="float:left;width:calc(100% - 270px)">
+  <div id="params">
+
   </div>
+  <!--<div class="easyui-panel" style="width:99%;padding:30px 60px;height:500px">-->
+    <!--<h3>Daty:</h3>-->
+    <!--<div style="margin-bottom:20px">-->
+      <!--<input id="start" class="easyui-datebox" label="Od:" labelPosition="left" style="width:100%;">-->
+    <!--</div>-->
+    <!--<div style="margin-bottom:20px">-->
+      <!--<input id="stop" class="easyui-datebox" label="Do:" labelPosition="left" style="width:100%;">-->
+    <!--</div>-->
+  <!--</div>-->
 </div>
 
 
@@ -98,6 +106,9 @@
     $('#requisitionButton').removeClass("selected");
   })
 
+  // Stimulsoft.Base.Localization.StiLocalization.setLocalizationFile("/js/stimulsoft-reports-js/Localization/pl.xml");
+  // var viewer = new Stimulsoft.Viewer.StiViewer(null, "StiViewer", false);
+  // viewer.renderHtml("params");
 
   function generateRequisitionReport(){
     var start = $('#start').val();
