@@ -1,7 +1,7 @@
 <html>
 <head>
-  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">
-  <!--<link rel="stylesheet" type="text/css" href="/styles/ui-cupertino/easyui.css">-->
+  <!--<link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">-->
+  <link rel="stylesheet" type="text/css" href="/styles/ui-cupertino/easyui.css">
   <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css">
   <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/demo/demo.css">
   <link rel="stylesheet" type="text/css" href="https://www.jeasyui.com/easyui/themes/color.css">
@@ -34,7 +34,7 @@
     }
   </script>
 </head>
-<body>
+<body style="overflow:hidden">
 <div class="se-pre-con"></div>
 
 <div id="navBar" style="margin-left:-20px;margin-top:-20px;padding-left:20px;padding-top:80px;margin-bottom:3px;background-color:#f2f5f7;width:100vw;background-image: url('/images/logo.png');background-repeat:no-repeat">
@@ -134,7 +134,7 @@
       <input name="name" label="Nazwa:" style="width:100%" class="easyui-textbox" required="true">
     </div>
     <div style="margin-bottom:5px">
-      <input name="quantity" label="Ilość:" style="width:100%" class="easyui-textbox" required="true">
+      <input name="quantity" type="number" label="Ilość:" style="width:100%" class="easyui-textbox" required="true">
     </div>
     <div id="hidableWare" style="margin-bottom:5px;display:none">
       <select id="cc4" style="width:250px" class="easyui-combobox" name="status" editable="false" label="Status:" limitToList="true" required="true">
@@ -494,26 +494,29 @@
       url = '/api/ware/edit';
     }
   }
-  function saveWare(){
+  function saveWare() {
     /*var sectorId = $('#cc3').val();
     var input = $("<input>")
       .attr("type", "hidden")
       .attr("name", "sectorId").val(sectorId)
       .attr("id","fakeField");
     $('#fm').append($(input));*/
+    var valid = $('#fm').form('validate');
+    if (valid) {
+    }
     var formData = $('#fm').serialize();
-    $.get(url,formData)
-      .done(function(data){
+    $.get(url, formData)
+      .done(function (data) {
         $('#dlg').dialog('close');        // close the dialog
         $('#dg').datagrid('reload');
       })
-      .fail(function(data){
+      .fail(function (data) {
         $.messager.show({
           title: 'Błąd',
           msg: data.responseText
         });
       })
-
+  }
    /* $('#fm').form('submit',{
       url: url,
       success: function(data){

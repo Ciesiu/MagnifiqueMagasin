@@ -13,6 +13,8 @@
   <!--<script type="text/javascript" src="/js/stimulsoft-reports-js/scripts/stimulsoft.reports.js"></script>-->
   <!--<script type="text/javascript" src="/js/stimulsoft-reports-js/scripts/stimulsoft.viewer.js"></script>-->
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+
 
   <style>
     .no-js #loader { display: none;  }
@@ -65,16 +67,38 @@
 </head>
 <body style="overflow:hidden">
 <div class="se-pre-con"></div>
+<input type="hidden" name="flag" id="flag"/>
 
 <div id="navBar" style="margin-left:-20px;margin-top:-20px;padding-left:20px;padding-top:80px;margin-bottom:3px;background-color:#f2f5f7;width:100vw;background-image: url('/images/logo.png');background-repeat:no-repeat">
   <%- partial('./navbar.ejs') %>
 </div>
 
+
+<div id="dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+     closed="true" modal="true" buttons="#dlg-buttons">
+  <form id="fm" name="fm" method="get" novalidate>
+    <div style="margin-bottom:5px;margin-top:10px">
+      <input id="start" class="easyui-datebox" label="Od:" labelPosition="left" style="width:100%;">
+    </div>
+    <div style="margin-bottom:5px;margin-top:10px">
+      <input id="stop" class="easyui-datebox" label="Do:" labelPosition="left" style="width:100%;">
+    </div>
+  </form>
+</div>
+<div id="dlg-buttons">
+  <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="generateReport()" style="width:90px">Generuj</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">Anuluj</a>
+</div>
+
+
+
 <div id="buttons" style="float:left;width:270px">
   <div class="easyui-panel" style="width:99%;padding-top:30px;padding-bottom:30px;height:100%;text-align: center;">
-    <input type="button" style="width:250px" class="easyui-linkbutton reportButton" value=" Zbiorczy raport z dostaw " onclick="generateSupplyReport()"><br/>
+    <input type="button" style="width:250px" class="easyui-linkbutton reportButton" value=" Zbiorczy raport z dostaw " onclick="openSupplyReportModal()"><br/>
     <input type="button" style="width:250px" class="easyui-linkbutton reportButton" value=" Zbiorczy raport stanu magazynowego " onclick="generateItemsReport()"><br/>
-    <input type="button" style="width:250px" class="easyui-linkbutton reportButton" value=" Zbiorczy raport z zapotrzebowań " onclick="generateRequisitionReport()">
+    <input type="button" style="width:250px" class="easyui-linkbutton reportButton" value=" Zbiorczy raport z zapotrzebowań " onclick="openReqisitionReportModal()">
+    <input type="button" style="width:250px" class="easyui-linkbutton reportButton" value=" Raport porównawczy z ilości dostaw " onclick="openCompareSuppliesReportModal()">
+
   </div>
 </div>
 <div id="paramDiv" style="float:left;width:calc(100% - 270px)">
@@ -109,6 +133,122 @@
   // Stimulsoft.Base.Localization.StiLocalization.setLocalizationFile("/js/stimulsoft-reports-js/Localization/pl.xml");
   // var viewer = new Stimulsoft.Viewer.StiViewer(null, "StiViewer", false);
   // viewer.renderHtml("params");
+
+  function openCompareSuppliesReportModal(){
+    $('#flag').val('compareSupply');
+    $('#dlg').dialog('open').dialog('setTitle','Nowy raport porównawczy - dostawy');
+    $('#fm').form('clear');
+  }
+
+  function openReqisitionReportModal(){
+    $('#flag').val('requisition');
+    $('#dlg').dialog('open').dialog('setTitle','Nowy raport z zapotrzebowań');
+    $('#fm').form('clear');
+  }
+
+  function openSupplyReportModal(){
+    $('#flag').val('supply');
+    $('#dlg').dialog('open').dialog('setTitle','Nowy raport z dostaw');
+    $('#fm').form('clear');
+  }
+
+  function generateReport(){
+    let flag = $('#flag').val();
+    switch(flag){
+      case 'supply':{
+        generateSupplyReport();
+        break;
+      }
+      case 'requisition':{
+        generateRequisitionReport();
+        break;
+      }
+      case 'compareSupply':{
+        generateCompareSupplyReport();
+        break;
+      }
+    }
+  }
+
+  function generateCompareSupplyReport(){
+    var start = $('#start').val();
+    var stop = $('#stop').val();
+    var startDate
+    if(start) startDate = new Date(start);
+    else startDate = "";
+    var stopDate
+    if(stop){
+      stopDate = new Date(stop);
+      stopDate.setHours(stopDate.getHours()+23);
+    }
+    else stopDate = "";
+
+    $.get("/api/delivery/getRaw",{startDate:startDate,stopDate:stopDate})
+      .done(function(data){
+        console.log(data);
+        var report = $("#section-to-print");
+        report.html("");
+        /////////////////////////////////////////////
+        report.append("<h1>Dostawy</h1>");
+        if(start && stop){
+          report.append("<h2>"+moment(startDate).format('DD/MM/YYYY')+" - "+moment(stopDate).format('DD/MM/YYYY')+"</h2>")
+        }
+        console.log("DATA",data);
+        var compiledData = {};
+        data.forEach(function(item, index){
+          var month = item.createdAt.substring(3,10);
+          if(compiledData[month] == undefined) compiledData[month] = 1;
+          else compiledData[month] = compiledData[month] + 1;
+        })
+        var chartLabels = [];
+        var chartData = [];
+
+        for (var key in compiledData) {
+          if (compiledData.hasOwnProperty(key)) {
+            //console.log(key + " -> " + compiledData[key]);
+            chartLabels.push(key);
+            chartData.push(compiledData[key]);
+          }
+        }
+
+        report.append("<canvas id='bar-chart'></canvas>");
+
+
+        new Chart(document.getElementById("bar-chart"), {
+          type: 'horizontalBar',
+          data: {
+            labels: chartLabels,
+            datasets: [
+              {
+                label: "Miesiąc",
+                //backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+                data: chartData
+              }
+            ]
+          },
+          options: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: 'Ilość dostaw w poszczególnych miesiącach'
+            }
+          }
+        });
+
+        /////////////////////////////////////////////
+        setTimeout(function(){
+          window.print();
+          report.css('visibility','hidden');
+        },200);
+
+      })
+      .fail(function(data){
+        $.messager.show({    // show error message
+          title: 'Błąd',
+          msg: data.responseText
+        })
+      })
+  }
 
   function generateRequisitionReport(){
     var start = $('#start').val();
@@ -146,6 +286,7 @@
 
         /////////////////////////////////////////////
         window.print();
+        report.css('visibility','hidden');
       })
       .fail(function(data){
         $.messager.show({    // show error message
@@ -171,6 +312,7 @@
 
         /////////////////////////////////////////////
         window.print();
+        report.css('visibility','hidden');
         //////////////////////////////////
       })
       .fail(function(data){
@@ -217,6 +359,7 @@
 
         /////////////////////////////////////////////
         window.print();
+        report.css('visibility','hidden');
       })
       .fail(function(data){
         $.messager.show({    // show error message
