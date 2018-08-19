@@ -503,20 +503,20 @@
     $('#fm').append($(input));*/
     var valid = $('#fm').form('validate');
     if (valid) {
+
+      var formData = $('#fm').serialize();
+      $.get(url, formData)
+        .done(function (data) {
+          $('#dlg').dialog('close');        // close the dialog
+          $('#dg').datagrid('reload');
+        })
+        .fail(function (data) {
+          $.messager.show({
+            title: 'Błąd',
+            msg: data.responseText
+          });
+        })
     }
-    var formData = $('#fm').serialize();
-    $.get(url, formData)
-      .done(function (data) {
-        $('#dlg').dialog('close');        // close the dialog
-        $('#dg').datagrid('reload');
-      })
-      .fail(function (data) {
-        $.messager.show({
-          title: 'Błąd',
-          msg: data.responseText
-        });
-      })
-  }
    /* $('#fm').form('submit',{
       url: url,
       success: function(data){
