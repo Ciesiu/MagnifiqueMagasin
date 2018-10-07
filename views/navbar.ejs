@@ -57,6 +57,7 @@
     sessionStorage.removeItem('firstName');
     sessionStorage.removeItem('lastName');
     sessionStorage.removeItem('id');
+    sessionStorage.removeItem('token');
 
     window.location.replace('/login');
   }
@@ -81,6 +82,10 @@
             title: 'OK',
             msg: "Poprawnie zmieniono hasło"
           });
+          setTimeout(function(){
+            sessionStorage.removeItem('token');
+            window.location.replace('/login');
+          },5000);
         })
         .fail(function(data){
           $.messager.show({    // show error message

@@ -60,12 +60,14 @@
         // sessionStorage.setItem('id',data.found.id);
         //
         // window.location.replace('/manageWares');
-        if(data.user){
+        if(data.user && data.token!=null){
           sessionStorage.setItem('login',data.user.userName);
           sessionStorage.setItem('role',data.user.role);
           sessionStorage.setItem('firstName',data.user.firstName);
           sessionStorage.setItem('lastName',data.user.lastName);
+          //alert(data.token);
           sessionStorage.setItem('id',data.user.id);
+          sessionStorage.setItem('token',data.token);
           window.location.replace('/manageWares')
         }
       })

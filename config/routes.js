@@ -121,6 +121,7 @@ module.exports.routes = {
   },
   'POST /login': 'AuthController.login',
   '/logout': 'AuthController.logout',
+  '/checkToken': 'AuthController.checkToken',
   'GET /register': { view: 'register' },
   // '/manageWares': [
   //   passport.authenticate('auth0', { failureRedirect: '/login' }),

@@ -29,9 +29,22 @@
     $(window).load(function() {
       $(".se-pre-con").fadeOut("slow");;
     });
-    if(!sessionStorage.getItem('id')){
+    if(!sessionStorage.getItem('id') || !sessionStorage.getItem('token')){
       window.location.replace('/login');
     }
+    //sprawdzanie tokenu
+    var address = 'http://localhost:1337/checkToken';
+
+    $.post(address,{id:sessionStorage.getItem('id'),token:sessionStorage.getItem('token')})
+      .done(function(data){
+        console.log(data);
+        if(!data.status || data.status == 2){
+          sessionStorage.removeItem('id');
+          sessionStorage.removeItem('token');
+          window.location.replace('/login')
+        }
+      })
+    //////////////////////////////////////
   </script>
 </head>
 <body style="overflow:hidden">
