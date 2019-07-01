@@ -24,13 +24,13 @@ a [Sails](http://sailsjs.org) application
 
 - [x] brakujące paginacje
 - [x] layout zarządzania userami
-- [ ] raporty
-- [ ] zarządzanie dostawami
+- [x] raporty
+- [x] zarządzanie dostawami
 - [x] ograniczenia przy zarządzaniu towarami/zamówieniami (statusy)
 - [x] loading screeny - skopiować do pozostałych widoków
 - [x] filtrowanie orderów po statusie
 - [x] sortowanie 
 
-- [ ] format daty
-- [ ] nazwa
-- [ ] banner?
+- [x] format daty
+- [x] nazwa
+- [x] banner?
